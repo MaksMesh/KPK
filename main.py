@@ -10,7 +10,7 @@ SCREEN_TITLE = 'KPK'
 
 
 class Player(arcade.Sprite):
-    def __init__(self, texture, x, y, scale, slots, weapons_list, bullets_list, enemies_list, modifiers={}):
+    def __init__(self, texture, x, y, scale, slots, weapons_list, bullets_list, enemies_list, emitters, modifiers={}):
         super().__init__(texture, scale, x, y)
         self.modifiers = modifiers
         self.weapon = None
@@ -19,6 +19,7 @@ class Player(arcade.Sprite):
         self.weapons_list = weapons_list
         self.bullets_list = bullets_list
         self.enemies_list = enemies_list
+        self.emitters = emitters
 
         self.inventory = [None] * slots
         self.curr_slot = 0
@@ -92,9 +93,11 @@ class Game(arcade.View):
 
         self.player_list = arcade.SpriteList()
         self.walls = arcade.SpriteList()
-        self.enemy_list = arcade.SpriteList()
+        self.enemy_list = arcade.SpriteList(True)
         self.weapons_list = arcade.SpriteList()
         self.bullets_list = arcade.SpriteList()
+        
+        self.emitters = []
 
         self.batch = Batch()
 
@@ -108,15 +111,14 @@ class Game(arcade.View):
     def setup(self):
         arcade.set_background_color(arcade.color.SKY_BLUE)
 
-        self.player = Player('assets/images/player/players/default-player.png', 400, 100, 0.5, 2, self.weapons_list, self.bullets_list, self.enemy_list, {})
+        self.player = Player('assets/images/player/players/default-player.png', 400, 100, 0.5, 2, self.weapons_list, self.bullets_list, self.enemy_list, self.emitters, {})
         self.player.set_weapon_slot(weapons.ModernPistol(self.player, 1), 0)
         self.player.set_weapon_slot(weapons.DarkSword(self.player, 1), 1)
         self.player_list.append(self.player)
 
-        enemy = enemies.Enemy(300, 500, True, self.player, (255, 102, 0), 1)
-        self.enemy_list.append(enemy)
-
-        
+        for i in range(10):
+            enemy = enemies.ShootingEnemy(300 + i, 500, True, self.player, (255, 102, 0), 1)
+            self.enemy_list.append(enemy)
 
         self.keys = set()
   
@@ -126,10 +128,22 @@ class Game(arcade.View):
     def on_update(self, delta_time):
         self.player_list.update(delta_time, self.keys)
         self.enemy_list.update(delta_time)
+
+        emitters_copy = self.emitters.copy()
+        for e in emitters_copy:
+            e.update(delta_time)
+        for e in emitters_copy:
+            if e.can_reap():
+                self.emitters.remove(e)
+
         self.physics_engine.step(delta_time)
 
     def on_draw(self):
         self.clear()
+
+        for e in self.emitters:
+            e.draw()
+
         self.player_list.draw()
         self.enemy_list.draw()
         self.bullets_list.draw()

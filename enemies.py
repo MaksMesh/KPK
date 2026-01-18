@@ -1,6 +1,22 @@
 import arcade
+import arcade.particles
 import math
 import bullets
+import random
+
+
+def make_explosion(x, y, texture, count=80):
+    return arcade.particles.Emitter(
+        center_xy=(x, y),
+        emit_controller=arcade.particles.EmitBurst(count),
+        particle_factory=lambda e: arcade.particles.FadeParticle(
+            filename_or_texture=texture,
+            change_xy=arcade.math.rand_in_circle((0.0, 0.0), 5.0),
+            lifetime=random.uniform(0.3, 0.6),
+            start_alpha=255, end_alpha=0,
+            scale=random.uniform(0.35, 0.6)
+        ),
+    )
 
 
 class BasicEnemy(arcade.Sprite):
@@ -43,6 +59,9 @@ class BasicEnemy(arcade.Sprite):
 
         if self.health <= 0:
             self.kill()
+            self.player.emitters.append(make_explosion(self.center_x, self.center_y, arcade.make_circle_texture(10, self.color), 20))
+        else:
+            self.player.emitters.append(make_explosion(self.center_x, self.center_y, arcade.make_circle_texture(8, self.color), 5))
 
     def attack(self):
         if self.time_left <= 0:
