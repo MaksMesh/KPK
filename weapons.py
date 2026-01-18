@@ -4,11 +4,12 @@ import bullets
 
 
 class BasicSword(arcade.Sprite):
-    def __init__(self, texture, scale, x, y, radius, damage, degrees, speed, reloading, player):
+    def __init__(self, texture, scale, x, y, radius, damage, degrees, speed, reloading, player, level):
         super().__init__(texture, scale)
         self.x = x
         self.y = y
         self.damage = damage
+        self.level = level
 
         self.degrees = degrees
         self.speed = speed
@@ -22,6 +23,8 @@ class BasicSword(arcade.Sprite):
 
         self.player = player
         self.enemies_list = self.player.enemies_list
+
+        self.apply_level()
 
     def update(self, delta_time):
         if not self.attacking:
@@ -69,25 +72,32 @@ class BasicSword(arcade.Sprite):
                 i.hurt(self.damage)
                 self.hitted.add(i)
 
+    def apply_level(self):
+        self.damage *= self.level / 10 + 0.9
+
 
 class WoodenSword(BasicSword):
-    def __init__(self, player):
-        super().__init__('assets/images/weapons/swords/wooden_sword.png', 0.8, 50, 20, 65, 4, 90, 200, 1, player)
+    def __init__(self, player, level):
+        super().__init__('assets/images/weapons/swords/wooden_sword.png', 0.8, 50, 20, 65, 4, 90, 200, 1, player, level)
+        self.rarity = 1
 
 
 class IronSword(BasicSword):
-    def __init__(self, player):
-        super().__init__('assets/images/weapons/swords/iron_sword.png', 1, 50, 20, 70, 7, 140, 280, 0.7, player)
+    def __init__(self, player, level):
+        super().__init__('assets/images/weapons/swords/iron_sword.png', 1, 50, 20, 70, 7, 140, 280, 0.7, player, level)
+        self.rarity = 2
 
 
 class DiamondSword(BasicSword):
-    def __init__(self, player):
-        super().__init__('assets/images/weapons/swords/sword.png', 1.2, 50, -15, 40, 9, 180, 360, 0.5, player)
+    def __init__(self, player, level):
+        super().__init__('assets/images/weapons/swords/sword.png', 1.2, 50, -15, 40, 9, 180, 360, 0.5, player, level)
+        self.rarity = 3
 
 
 class DarkSword(BasicSword):
-    def __init__(self, player):
-        super().__init__('assets/images/weapons/swords/dark_sword.png', 1.3, 60, 35, 80, 13, 220, 400, 0.3, player)
+    def __init__(self, player, level):
+        super().__init__('assets/images/weapons/swords/dark_sword.png', 1.3, 60, 35, 80, 13, 220, 400, 0.3, player, level)
+        self.rarity = 4
 
 
 class Pistol(arcade.Sprite):
@@ -176,8 +186,10 @@ class Pistol(arcade.Sprite):
 class OldPistol(Pistol):
     def __init__(self, player, level):
         super().__init__('assets/images/weapons/pistols/pistol.png', 1.2, 50, 0, 60, bullets.NormalPistolBullet(), 0.75, 1, player, level)
+        self.rarity = 1
 
 
-class OldPistol(Pistol):
+class ModernPistol(Pistol):
     def __init__(self, player, level):
         super().__init__('assets/images/weapons/pistols/modern_pistol.png', 1.2, 50, 0, 60, bullets.ModernPistolBullet(), 0.5, 2, player, level)
+        self.rarity = 2

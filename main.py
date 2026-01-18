@@ -1,4 +1,5 @@
 import arcade
+from pyglet.graphics import Batch
 import weapons
 import enemies
 
@@ -58,6 +59,7 @@ class Player(arcade.Sprite):
 
         if self.health <= 0:
             self.kill()
+            self.health = 0
 
     def kill(self):
         super().kill()
@@ -94,7 +96,12 @@ class Game(arcade.View):
         self.weapons_list = arcade.SpriteList()
         self.bullets_list = arcade.SpriteList()
 
+        self.batch = Batch()
+
         self.physics_engine = arcade.PymunkPhysicsEngine(damping=0)
+
+        self.health_bar_texture = arcade.load_texture('assets/images/gui/health_bar.png')
+        self.slot_texture = arcade.load_texture('assets/images/gui/slot.png')
 
         self.setup()
 
@@ -102,13 +109,14 @@ class Game(arcade.View):
         arcade.set_background_color(arcade.color.SKY_BLUE)
 
         self.player = Player('assets/images/player/players/default-player.png', 400, 100, 0.5, 2, self.weapons_list, self.bullets_list, self.enemy_list, {})
-        self.player.set_weapon_slot(weapons.OldPistol(self.player, 1), 0)
-        self.player.set_weapon_slot(weapons.DarkSword(self.player), 1)
+        self.player.set_weapon_slot(weapons.ModernPistol(self.player, 1), 0)
+        self.player.set_weapon_slot(weapons.DarkSword(self.player, 1), 1)
         self.player_list.append(self.player)
 
-        self.enemy = enemies.SlowEnemy(300, 500, True, self.player, (255, 102, 0))
-        self.enemy_list.append(self.enemy)
+        enemy = enemies.Enemy(300, 500, True, self.player, (255, 102, 0), 1)
+        self.enemy_list.append(enemy)
 
+        
 
         self.keys = set()
   
@@ -127,8 +135,37 @@ class Game(arcade.View):
         self.bullets_list.draw()
         self.weapons_list.draw()
 
+        self.draw_gui()
+        self.batch.draw()
+
+    def draw_gui(self):
+        rect = arcade.Rect(550, SCREEN_WIDTH, 0, 70, 250, 70, 675, 35)
+        arcade.draw_texture_rect(self.health_bar_texture, rect)
+
+        hp_width = 210 * (self.player.health / self.player.max_health)
+
+        rect = arcade.Rect(570, SCREEN_WIDTH - 230 + hp_width, 23, 56, hp_width, 33, 570 + hp_width / 2, 35)
+        arcade.draw_rect_filled(rect, arcade.color.RED)
+
+        for i in range(len(self.player.inventory)):
+            rect = arcade.Rect(i * 70, i * 70 + 70, 0, 70, 70, 70, i * 70 + 35, 35)
+            arcade.draw_texture_rect(self.slot_texture, rect)
+            
+            try:
+                texture = self.player.inventory[i].source_texture
+            except AttributeError:
+                texture = self.player.inventory[i].texture
+
+            arcade.draw_texture_rect(texture, rect)
+
+            if i == self.player.curr_slot:
+                rect_f = rect
+
+        arcade.draw_rect_outline(rect_f, arcade.color.SEA_BLUE, 3)
+
+        self.hp_text = arcade.Text(f'{round(self.player.health)}/{self.player.max_health}', 675, 35, arcade.color.WHITE, 20, anchor_x='center', anchor_y='center', batch=self.batch)
+
     def on_key_press(self, symbol, modifiers):
-        print(symbol)
         self.keys.add(symbol)
 
         if symbol == arcade.key.E:

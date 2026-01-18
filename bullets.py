@@ -45,3 +45,13 @@ class NormalPistolBullet(Bullet):
 class ModernPistolBullet(Bullet):
     def __init__(self):
         super().__init__('assets/images/bullets/pistol_bullet.png', 1.5, 4, 1.5, 250)
+
+
+class NormalEnemyBullet(Bullet):
+    def __init__(self):
+        super().__init__('assets/images/bullets/pistol_bullet.png', 1.3, 3, 1.5, 200)
+
+
+class GoodEnemyBullet(Bullet):
+    def __init__(self):
+        super().__init__('assets/images/bullets/pistol_bullet.png', 1.5, 5, 1.75, 250)
