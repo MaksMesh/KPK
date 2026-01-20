@@ -2,6 +2,7 @@ import arcade
 from pyglet.graphics import Batch
 import weapons
 import enemies
+import items
 
 
 SCREEN_WIDTH = 800
@@ -10,7 +11,7 @@ SCREEN_TITLE = 'KPK'
 
 
 class Player(arcade.Sprite):
-    def __init__(self, texture, x, y, scale, slots, weapons_list, bullets_list, enemies_list, emitters, modifiers={}):
+    def __init__(self, texture, x, y, scale, slots, weapons_list, bullets_list, enemies_list, items_list, emitters, modifiers={}):
         super().__init__(texture, scale, x, y)
         self.modifiers = modifiers
         self.weapon = None
@@ -20,6 +21,7 @@ class Player(arcade.Sprite):
         self.bullets_list = bullets_list
         self.enemies_list = enemies_list
         self.emitters = emitters
+        self.items_list = items_list
 
         self.inventory = [None] * slots
         self.curr_slot = 0
@@ -86,6 +88,18 @@ class Player(arcade.Sprite):
         if slot == self.curr_slot:
             self.set_weapon(weapon)
 
+    def get_item(self):
+        itemss = sorted(self.items_list.sprite_list, key=lambda x: x.get_distance())
+
+        if itemss:
+            if itemss[0].get_distance() <= 100:
+                return itemss[0]
+
+    def drop_item(self):
+        if self.inventory[self.curr_slot] is not None:
+            self.items_list.append(items.WeaponItem(self.inventory[self.curr_slot].__class__, self.center_x, self.center_y, self, self.inventory[self.curr_slot].level))
+            self.set_weapon_slot(None, self.curr_slot)
+
 
 class Game(arcade.View):
     def __init__(self):
@@ -96,6 +110,7 @@ class Game(arcade.View):
         self.enemy_list = arcade.SpriteList(True)
         self.weapons_list = arcade.SpriteList()
         self.bullets_list = arcade.SpriteList()
+        self.items_list = arcade.SpriteList()
         
         self.emitters = []
 
@@ -105,20 +120,31 @@ class Game(arcade.View):
 
         self.health_bar_texture = arcade.load_texture('assets/images/gui/health_bar.png')
         self.slot_texture = arcade.load_texture('assets/images/gui/slot.png')
+        self.gui_rarities = [arcade.load_texture('assets/images/gui/usual_item_gui.png'),
+                             arcade.load_texture('assets/images/gui/unusual_item_gui.png'),
+                             arcade.load_texture('assets/images/gui/rare_item_gui.png'),
+                             arcade.load_texture('assets/images/gui/epic_item_gui.png'),
+                             arcade.load_texture('assets/images/gui/legendary_item_gui.png')]
+        self.texts = []
+
+        self.showing_item = None
+        self.chosen_item = None
 
         self.setup()
 
     def setup(self):
         arcade.set_background_color(arcade.color.SKY_BLUE)
 
-        self.player = Player('assets/images/player/players/default-player.png', 400, 100, 0.5, 2, self.weapons_list, self.bullets_list, self.enemy_list, self.emitters, {})
+        self.player = Player('assets/images/player/players/default-player.png', 400, 100, 0.5, 2, self.weapons_list, self.bullets_list, self.enemy_list, self.items_list, self.emitters, {})
         self.player.set_weapon_slot(weapons.ModernPistol(self.player, 1), 0)
         self.player.set_weapon_slot(weapons.DarkSword(self.player, 1), 1)
         self.player_list.append(self.player)
 
-        for i in range(10):
-            enemy = enemies.ShootingEnemy(300 + i, 500, True, self.player, (255, 102, 0), 1)
-            self.enemy_list.append(enemy)
+        enemy = enemies.Enemy(300, 500, True, self.player, (255, 102, 0), 1)
+        self.enemy_list.append(enemy)
+
+        item = items.WeaponItem(weapons.DiamondSword, 100, 100, self.player, 3)
+        self.items_list.append(item)
 
         self.keys = set()
   
@@ -126,17 +152,18 @@ class Game(arcade.View):
         self.physics_engine.add_sprite_list(self.enemy_list, 1, 0, moment_of_inertia=arcade.PymunkPhysicsEngine.MOMENT_INF, collision_type='enemy')
 
     def on_update(self, delta_time):
-        self.player_list.update(delta_time, self.keys)
-        self.enemy_list.update(delta_time)
+        if self.showing_item is None:
+            self.player_list.update(delta_time, self.keys)
+            self.enemy_list.update(delta_time)
 
-        emitters_copy = self.emitters.copy()
-        for e in emitters_copy:
-            e.update(delta_time)
-        for e in emitters_copy:
-            if e.can_reap():
-                self.emitters.remove(e)
+            emitters_copy = self.emitters.copy()
+            for e in emitters_copy:
+                e.update(delta_time)
+            for e in emitters_copy:
+                if e.can_reap():
+                    self.emitters.remove(e)
 
-        self.physics_engine.step(delta_time)
+            self.physics_engine.step(delta_time)
 
     def on_draw(self):
         self.clear()
@@ -144,6 +171,7 @@ class Game(arcade.View):
         for e in self.emitters:
             e.draw()
 
+        self.items_list.draw()
         self.player_list.draw()
         self.enemy_list.draw()
         self.bullets_list.draw()
@@ -165,12 +193,13 @@ class Game(arcade.View):
             rect = arcade.Rect(i * 70, i * 70 + 70, 0, 70, 70, 70, i * 70 + 35, 35)
             arcade.draw_texture_rect(self.slot_texture, rect)
             
-            try:
-                texture = self.player.inventory[i].source_texture
-            except AttributeError:
-                texture = self.player.inventory[i].texture
+            if self.player.inventory[i] is not None:
+                try:
+                    texture = self.player.inventory[i].source_texture
+                except AttributeError:
+                    texture = self.player.inventory[i].texture
 
-            arcade.draw_texture_rect(texture, rect)
+                arcade.draw_texture_rect(texture, rect)
 
             if i == self.player.curr_slot:
                 rect_f = rect
@@ -179,11 +208,38 @@ class Game(arcade.View):
 
         self.hp_text = arcade.Text(f'{round(self.player.health)}/{self.player.max_health}', 675, 35, arcade.color.WHITE, 20, anchor_x='center', anchor_y='center', batch=self.batch)
 
+        if self.showing_item is not None:
+            self.draw_item()
+
     def on_key_press(self, symbol, modifiers):
         self.keys.add(symbol)
 
         if symbol == arcade.key.E:
             self.player.next_item()
+        elif symbol == arcade.key.Q:
+            if self.showing_item is None:
+                item = self.player.get_item()
+
+                if item is not None:
+                    if type(item) is items.WeaponItem:
+                        if self.player.inventory[self.player.curr_slot] is None:
+                            self.chosen_item = item
+                            self.showing_item = item.weapon(self.player, item.level)
+                    else:
+                        item.activate()
+            else:
+                self.showing_item = None
+                self.chosen_item = None
+                self.texts.clear()
+        elif symbol == arcade.key.Z:
+            self.player.drop_item()
+        elif symbol == arcade.key.ENTER:
+            if self.showing_item is not None:
+                self.player.set_weapon_slot(self.showing_item, self.player.curr_slot)
+                self.chosen_item.kill()
+                self.showing_item = None
+                self.chosen_item = None
+                self.texts.clear()
 
     def on_key_release(self, symbol, modifiers):
         self.keys.discard(symbol)
@@ -192,7 +248,29 @@ class Game(arcade.View):
         if button == arcade.MOUSE_BUTTON_LEFT:
             self.player.attack(x, y)
 
+    def draw_item(self):
+        texture = self.gui_rarities[self.showing_item.rarity - 1]
 
+        rect = arcade.Rect(250, 550, 200, 400, 300, 200, 400, 300)
+        arcade.draw_texture_rect(texture, rect)
+
+        try:
+            texture = self.showing_item.source_texture
+        except AttributeError:
+            texture = self.showing_item.texture
+
+        rect = arcade.Rect(265, 315, 335, 385, 50, 50, 290, 360)
+        arcade.draw_texture_rect(texture, rect)
+
+        self.texts = [arcade.Text(self.showing_item.return_name(), 320, 380, font_size=13, anchor_x='left', anchor_y='center', batch=self.batch)]
+        texts = self.showing_item.return_desc().split('\n')
+
+        for i in range(len(texts)):
+            self.texts.append(arcade.Text(texts[i], 265, 310 - 20 * i, font_size=10, batch=self.batch))
+
+        self.texts.append(arcade.Text('ENTER чтобы подтвердить и Q чтобы выйти', 400, 150, font_size=20, anchor_x='center', anchor_y='center', batch=self.batch))
+
+    
 def main():
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     view = Game()
