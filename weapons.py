@@ -8,7 +8,7 @@ class BasicSword(arcade.Sprite):
         super().__init__(texture, scale)
         self.x = x
         self.y = y
-        self.damage = damage
+        self.damage = damage * player.modifiers.get('damage', 1)
         self.level = level
 
         self.degrees = degrees
@@ -83,6 +83,9 @@ class BasicSword(arcade.Sprite):
     def return_desc(self):
         return f'Уровень: {self.level}\nУрон: {self.damage}\nПерезарядка: {self.reloading_time}'
 
+    def return_to_live(self):
+        pass
+
 
 class WoodenSword(BasicSword):
     def __init__(self, player, level):
@@ -121,7 +124,9 @@ class Pistol(arcade.Sprite):
         self.level = level
 
         self.bullet = bullet
+        self.bullet.damage *= player.modifiers.get('damage', 1)
         self.bullets_list = arcade.SpriteList()
+        player.bullets_list.append(self.bullets_list)
 
         self.reloading_time = reloading
         self.time_left = 0
@@ -191,22 +196,27 @@ class Pistol(arcade.Sprite):
             bullet.position = self.position
             bullet.attacked = set()
             self.bullets_list.append(bullet)
-            self.player.bullets_list.append(bullet)
 
     def apply_level(self):
         self.bullet.damage *= self.level / 10 + 0.9
 
     def kill(self):
         super().kill()
+        self.bullets_list.clear()
 
-        for i in self.bullets_list.sprite_list:
-            i.kill()
+        try:
+            del self.player.bullets_list[self.player.bullets_list.index(self.bullets_list)]
+        except Exception:
+            pass
 
     def return_name(self):
         return self.name
 
     def return_desc(self):
         return f'Уровень: {self.level}\nУрон: {self.bullet.damage}\nПерезарядка: {self.reloading_time}'
+
+    def return_to_live(self):
+        self.player.bullets_list.append(self.bullets_list)
 
 
 class OldPistol(Pistol):

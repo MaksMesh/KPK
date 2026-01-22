@@ -105,6 +105,7 @@ class BasicShootingEnemy(BasicEnemy):
         self.bullets_list = arcade.SpriteList()
         self.bullet = bullet
         self.attacking = False
+        self.player.bullets_list.append(self.bullets_list)
 
         self.bullet.damage = self.damage
 
@@ -166,7 +167,6 @@ class BasicShootingEnemy(BasicEnemy):
             bullet = self.bullet.shoot(self.center_x, self.center_y, self.player.center_x, self.player.center_y)
             bullet.position = self.weapon.position
             self.bullets_list.append(bullet)
-            self.player.bullets_list.append(bullet)
 
     def kill(self):
         super().kill()
@@ -175,6 +175,8 @@ class BasicShootingEnemy(BasicEnemy):
         for i in self.bullets_list.sprite_list:
             i.remove_from_sprite_lists()
             i.kill()
+
+        del self.player.bullets_list[self.player.bullets_list.index(self.bullets_list)]
 
 
 class ShootingEnemy(BasicShootingEnemy):
