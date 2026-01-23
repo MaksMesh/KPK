@@ -47,6 +47,31 @@ class ModernPistolBullet(Bullet):
         super().__init__('assets/images/bullets/pistol_bullet.png', 1.5, 4, 1.5, 250)
 
 
+class PrimitiveSniperBullet(Bullet):
+    def __init__(self):
+        super().__init__('assets/images/bullets/upgraded_bullet.png', 1.5, 8, 1.5, 500)
+
+
+class SniperBullet(Bullet):
+    def __init__(self):
+        super().__init__('assets/images/bullets/insane_bullet.png', 1.5, 13, 1.5, 650)
+
+
+class SpreadingBullet(Bullet):
+    def __init__(self):
+        super().__init__('assets/images/bullets/upgraded_bullet.png', 1.75, 3, 1.25, 250)
+
+
+class GoodSpreadingBullet(Bullet):
+    def __init__(self):
+        super().__init__('assets/images/bullets/upgraded_bullet.png', 1.75, 4, 1.5, 275)
+
+
+class InsaneSpreadingBullet(Bullet):
+    def __init__(self):
+        super().__init__('assets/images/bullets/insane_bullet.png', 2, 5, 1.5, 300)
+
+
 class NormalEnemyBullet(Bullet):
     def __init__(self):
         super().__init__('assets/images/bullets/pistol_bullet.png', 1.3, 3, 1.5, 200)

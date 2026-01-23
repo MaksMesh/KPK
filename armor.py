@@ -44,27 +44,27 @@ class WoodenArmor(BaseArmor):
 
 class IronArmor(BaseArmor):
     def __init__(self, player, level):
-        super().__init__('assets/images/armor/iron_armor.png', player.scale, 15, player, level)
+        super().__init__('assets/images/armor/iron_armor.png', player.scale, 13, player, level)
         self.rarity = 2
         self.name = 'Железная броня'
 
 
 class DiamondArmor(BaseArmor):
     def __init__(self, player, level):
-        super().__init__('assets/images/armor/diamond_armor.png', player.scale, 20, player, level)
+        super().__init__('assets/images/armor/diamond_armor.png', player.scale, 16, player, level)
         self.rarity = 3
         self.name = 'Алмазная броня'
 
 
 class HolyArmor(BaseArmor):
     def __init__(self, player, level):
-        super().__init__('assets/images/armor/holy_armor.png', player.scale, 25, player, level)
+        super().__init__('assets/images/armor/holy_armor.png', player.scale, 20, player, level)
         self.rarity = 4
         self.name = 'Святая броня'
 
 
 class MechaArmor(BaseArmor):
     def __init__(self, player, level):
-        super().__init__('assets/images/armor/mecha_armor.png', player.scale, 30, player, level)
+        super().__init__('assets/images/armor/mecha_armor.png', player.scale, 25, player, level)
         self.rarity = 5
         self.name = 'Меха-броня'

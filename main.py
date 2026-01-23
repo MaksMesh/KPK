@@ -167,8 +167,8 @@ class Game(arcade.View):
         arcade.set_background_color(arcade.color.SKY_BLUE)
 
         self.player = Player('assets/images/player/players/default-player.png', 400, 100, 0.5, 2, self.weapons_list, self.armor_list, self.bullets_list, self.enemy_list, self.items_list, self.emitters, {'damage': 2, 'health': 2, 'speed': 1.5})
-        self.player.set_weapon_slot(weapons.ModernPistol(self.player, 1), 0)
-        self.player.set_weapon_slot(weapons.DarkSword(self.player, 1), 1)
+        self.player.set_weapon_slot(weapons.Shotgun(self.player, 1), 0)
+        self.player.set_weapon_slot(weapons.Sniper(self.player, 1), 1)
 
         self.player.set_armor(armor.HolyArmor(self.player, 1))
         self.player_list.append(self.player)

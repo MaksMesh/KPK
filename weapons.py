@@ -89,7 +89,7 @@ class BasicSword(arcade.Sprite):
 
 class WoodenSword(BasicSword):
     def __init__(self, player, level):
-        super().__init__('assets/images/weapons/swords/wooden_sword.png', 0.8, 50, 20, 65, 4, 90, 200, 1, player, level)
+        super().__init__('assets/images/weapons/swords/wooden_sword.png', 0.8, 50, 20, 65, 6, 90, 200, 1, player, level)
         self.rarity = 1
         self.name = 'Деревянный меч'
 
@@ -103,16 +103,23 @@ class IronSword(BasicSword):
 
 class DiamondSword(BasicSword):
     def __init__(self, player, level):
-        super().__init__('assets/images/weapons/swords/sword.png', 1.2, 50, -15, 40, 9, 180, 360, 0.5, player, level)
+        super().__init__('assets/images/weapons/swords/sword.png', 1.2, 50, 45, 90, 9, 180, 360, 0.5, player, level)
         self.rarity = 3
         self.name = 'Алмазный меч'
 
 
 class DarkSword(BasicSword):
     def __init__(self, player, level):
-        super().__init__('assets/images/weapons/swords/dark_sword.png', 1.3, 60, 35, 80, 13, 220, 400, 0.3, player, level)
+        super().__init__('assets/images/weapons/swords/dark_sword.png', 1.3, 60, 35, 80, 12, 220, 400, 0.3, player, level)
         self.rarity = 4
         self.name = 'Меч тьмы'
+
+
+class ChaosSaber(BasicSword):
+    def __init__(self, player, level):
+        super().__init__('assets/images/weapons/swords/chaos_saber.png', 1.5, 50, 50, 110, 14, 260, 500, 0.25, player, level)
+        self.rarity = 5
+        self.name = 'Сабля хаоса'
 
 
 class Pistol(arcade.Sprite):
@@ -231,3 +238,116 @@ class ModernPistol(Pistol):
         super().__init__('assets/images/weapons/pistols/modern_pistol.png', 1.2, 50, 0, 60, bullets.ModernPistolBullet(), 0.5, 2, player, level)
         self.rarity = 2
         self.name = 'Современный пистолет'
+
+
+class PrimitiveSniper(Pistol):
+    def __init__(self, player, level):
+        super().__init__('assets/images/weapons/pistols/primitive_sniper.png', 1.4, 55, 0, 60, bullets.PrimitiveSniperBullet(), 1, 3, player, level)
+        self.rarity = 3
+        self.name = 'Примитивная снайперка'
+
+
+class Sniper(Pistol):
+    def __init__(self, player, level):
+        super().__init__('assets/images/weapons/pistols/sniper.png', 1.4, 55, 0, 60, bullets.SniperBullet(), 0.9, 5, player, level)
+        self.rarity = 4
+        self.name = 'Снайперка'
+
+
+class SpreadingPistol(Pistol):
+    def __init__(self, player, level):
+        super().__init__('assets/images/weapons/pistols/spreading_pistol.png', 1.2, 55, 0, 60, bullets.SpreadingBullet(), 0.75, 1, player, level)
+        self.rarity = 3
+        self.name = 'Рассеивающий пистолет'
+
+    def attack(self, x, y):
+        if self.time_left <= 0:
+            self.attacking = True
+
+            self.angle = arcade.math.get_angle_degrees(self.player.center_x, self.player.center_y, x, y)
+
+            if -90 < self.angle < 90:
+                self.texture = self.source_texture
+            else:
+                self.texture = self.source_texture.flip_vertically()
+
+            self.center_x = self.player.center_x + self.r_d * math.sin(self.radians + math.radians(90))
+            self.center_y = self.player.center_y + self.r_d * math.cos(self.radians + math.radians(90))
+
+            self.time_left = self.reloading_time
+
+            targets = [(x, y), arcade.math.rotate_around_point((self.player.center_x, self.player.center_y), (x, y), 30), arcade.math.rotate_around_point((self.player.center_x, self.player.center_y), (x, y), -30)]
+
+            for x, y in targets:
+                bullet = self.bullet.shoot(self.player.center_x, self.player.center_y, x, y)
+                bullet.position = self.position
+                bullet.attacked = set()
+                self.bullets_list.append(bullet)
+
+
+class GoodSpreadingPistol(Pistol):
+    def __init__(self, player, level):
+        super().__init__('assets/images/weapons/pistols/good_spreading_pistol.png', 1.2, 55, 0, 60, bullets.GoodSpreadingBullet(), 0.75, 2, player, level)
+        self.rarity = 4
+        self.name = 'Усечённый дробовик'
+
+    def attack(self, x, y):
+        if self.time_left <= 0:
+            self.attacking = True
+
+            self.angle = arcade.math.get_angle_degrees(self.player.center_x, self.player.center_y, x, y)
+
+            if -90 < self.angle < 90:
+                self.texture = self.source_texture
+            else:
+                self.texture = self.source_texture.flip_vertically()
+
+            self.center_x = self.player.center_x + self.r_d * math.sin(self.radians + math.radians(90))
+            self.center_y = self.player.center_y + self.r_d * math.cos(self.radians + math.radians(90))
+
+            self.time_left = self.reloading_time
+
+            targets = [(x, y), arcade.math.rotate_around_point((self.player.center_x, self.player.center_y), (x, y), 30), arcade.math.rotate_around_point((self.player.center_x, self.player.center_y), (x, y), -30)]
+
+            for x, y in targets:
+                bullet = self.bullet.shoot(self.player.center_x, self.player.center_y, x, y)
+                bullet.position = self.position
+                bullet.attacked = set()
+                self.bullets_list.append(bullet)
+
+
+class Shotgun(Pistol):
+    def __init__(self, player, level):
+        super().__init__('assets/images/weapons/pistols/shotgun.png', 1.2, 55, 0, 60, bullets.InsaneSpreadingBullet(), 0.65, 3, player, level)
+        self.rarity = 5
+        self.name = 'Дробовик'
+
+    def attack(self, x, y):
+        if self.time_left <= 0:
+            self.attacking = True
+
+            self.angle = arcade.math.get_angle_degrees(self.player.center_x, self.player.center_y, x, y)
+
+            if -90 < self.angle < 90:
+                self.texture = self.source_texture
+            else:
+                self.texture = self.source_texture.flip_vertically()
+
+            self.center_x = self.player.center_x + self.r_d * math.sin(self.radians + math.radians(90))
+            self.center_y = self.player.center_y + self.r_d * math.cos(self.radians + math.radians(90))
+
+            self.time_left = self.reloading_time
+
+            targets = [(x, y), arcade.math.rotate_around_point((self.player.center_x, self.player.center_y), (x, y), 30), 
+                       arcade.math.rotate_around_point((self.player.center_x, self.player.center_y), (x, y), -30),
+                       arcade.math.rotate_around_point((self.player.center_x, self.player.center_y), (x, y), -60),
+                       arcade.math.rotate_around_point((self.player.center_x, self.player.center_y), (x, y), 60)]
+
+            for x, y in targets:
+                bullet = self.bullet.shoot(self.player.center_x, self.player.center_y, x, y)
+                bullet.position = self.position
+                bullet.attacked = set()
+                self.bullets_list.append(bullet)
+
+
+                
