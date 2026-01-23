@@ -188,3 +188,7 @@ class GoodShootingEnemy(BasicShootingEnemy):
     def __init__(self, x, y, active, player, color, level):
         super().__init__('assets/images/enemies/good_shooting_enemy.png', 1, x, y, 5, 0.75, 8, 3000, 50, 0, 60, 200, 600, 'assets/images/weapons/pistols/modern_pistol.png', 1.5, bullets.GoodEnemyBullet(), active, player, color, level)
 
+
+NORMAL_ENEMIES = [Enemy, FastEnemy, SlowEnemy, ShootingEnemy]
+ELITE_ENEMIES = [GoodShootingEnemy]
+BOSSES = []

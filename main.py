@@ -167,8 +167,8 @@ class Game(arcade.View):
         arcade.set_background_color(arcade.color.SKY_BLUE)
 
         self.player = Player('assets/images/player/players/default-player.png', 400, 100, 0.5, 2, self.weapons_list, self.armor_list, self.bullets_list, self.enemy_list, self.items_list, self.emitters, {'damage': 2, 'health': 2, 'speed': 1.5})
-        self.player.set_weapon_slot(weapons.Shotgun(self.player, 1), 0)
-        self.player.set_weapon_slot(weapons.Sniper(self.player, 1), 1)
+        self.player.set_weapon_slot(weapons.LightBook(self.player, 1), 0)
+        self.player.set_weapon_slot(weapons.DarkBook(self.player, 1), 1)
 
         self.player.set_armor(armor.HolyArmor(self.player, 1))
         self.player_list.append(self.player)
@@ -193,7 +193,7 @@ class Game(arcade.View):
                 e.update(delta_time)
             for e in emitters_copy:
                 if e.can_reap():
-                    self.emitters.remove(e)
+                    self.emitters.remove(e) 
 
             self.physics_engine.step(delta_time)
             self.player_list.update(delta_time, self.keys)
