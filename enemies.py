@@ -105,6 +105,7 @@ class BasicShootingEnemy(BasicEnemy):
         self.bullets_list = arcade.SpriteList()
         self.bullet = bullet
         self.attacking = False
+        self.player.bullets_list.append(self.bullets_list)
 
         self.bullet.damage = self.damage
 
@@ -166,7 +167,6 @@ class BasicShootingEnemy(BasicEnemy):
             bullet = self.bullet.shoot(self.center_x, self.center_y, self.player.center_x, self.player.center_y)
             bullet.position = self.weapon.position
             self.bullets_list.append(bullet)
-            self.player.bullets_list.append(bullet)
 
     def kill(self):
         super().kill()
@@ -175,6 +175,8 @@ class BasicShootingEnemy(BasicEnemy):
         for i in self.bullets_list.sprite_list:
             i.remove_from_sprite_lists()
             i.kill()
+
+        del self.player.bullets_list[self.player.bullets_list.index(self.bullets_list)]
 
 
 class ShootingEnemy(BasicShootingEnemy):
@@ -186,3 +188,7 @@ class GoodShootingEnemy(BasicShootingEnemy):
     def __init__(self, x, y, active, player, color, level):
         super().__init__('assets/images/enemies/good_shooting_enemy.png', 1, x, y, 5, 0.75, 8, 3000, 50, 0, 60, 200, 600, 'assets/images/weapons/pistols/modern_pistol.png', 1.5, bullets.GoodEnemyBullet(), active, player, color, level)
 
+
+NORMAL_ENEMIES = [Enemy, FastEnemy, SlowEnemy, ShootingEnemy]
+ELITE_ENEMIES = [GoodShootingEnemy]
+BOSSES = []

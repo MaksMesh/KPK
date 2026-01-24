@@ -1,7 +1,7 @@
-import arcade
 import json
 import math
-from typing import Dict, List, Optional
+
+import arcade
 
 
 class StarNode:
@@ -130,7 +130,7 @@ class LevelTransitionView(arcade.View):
         self.selected_node = None
         self.hovered_node = None
         self.spaceship_position = self.level_graph.current_node.position if self.level_graph.current_node else (
-        400, 300)
+            400, 300)
         self.spaceship_target = None
         self.spaceship_speed = 200
 
@@ -150,7 +150,7 @@ class LevelTransitionView(arcade.View):
             self.complete_current_level()
 
     def create_darkened_texture(self, texture):
-        from PIL import Image, ImageEnhance
+        from PIL import ImageEnhance
         image = texture.image
         enhancer = ImageEnhance.Brightness(image)
         darkened_image = enhancer.enhance(0.3)

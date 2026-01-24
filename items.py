@@ -31,3 +31,27 @@ class WeaponItem(Item):
 
     def get_distance(self):
         return arcade.math.get_distance(*self.player.position, *self.position)
+
+
+class ArmorItem(Item):
+    def __init__(self, armor, x, y, player, level):
+        armorex = armor(player, 1)
+
+        try:
+            texture = armorex.source_texture
+        except AttributeError:
+            texture = armorex.texture
+
+        super().__init__(texture, armorex.scale, x, y)
+
+        self.armor = armor
+        self.player = player
+        self.level = level
+
+    def activate(self):
+        if self.player.inventory[self.player.curr_slot] is None:
+            self.player.set_armor(self.armor(self.player, self.level))
+            self.kill()
+
+    def get_distance(self):
+        return arcade.math.get_distance(*self.player.position, *self.position)

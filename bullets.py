@@ -32,6 +32,7 @@ class Bullet:
         self.damage = damage
         self.lifetime = lifetime
         self.speed = speed
+        self.color = (0, 0, 0)
 
     def shoot(self, x1, y1, x2, y2):
         return BulletBase(self.texture, self.scale, x1, y1, x2, y2, self.damage, self.lifetime, self.speed)
@@ -45,6 +46,43 @@ class NormalPistolBullet(Bullet):
 class ModernPistolBullet(Bullet):
     def __init__(self):
         super().__init__('assets/images/bullets/pistol_bullet.png', 1.5, 4, 1.5, 250)
+
+
+class PrimitiveSniperBullet(Bullet):
+    def __init__(self):
+        super().__init__('assets/images/bullets/upgraded_bullet.png', 1.5, 8, 1.5, 500)
+
+
+class SniperBullet(Bullet):
+    def __init__(self):
+        super().__init__('assets/images/bullets/insane_bullet.png', 1.5, 13, 1.5, 650)
+
+
+class SpreadingBullet(Bullet):
+    def __init__(self):
+        super().__init__('assets/images/bullets/upgraded_bullet.png', 1.75, 3, 1.25, 250)
+
+
+class GoodSpreadingBullet(Bullet):
+    def __init__(self):
+        super().__init__('assets/images/bullets/upgraded_bullet.png', 1.75, 4, 1.5, 275)
+
+
+class InsaneSpreadingBullet(Bullet):
+    def __init__(self):
+        super().__init__('assets/images/bullets/insane_bullet.png', 2, 5, 1.5, 300)
+
+
+class WaterBullet(Bullet):
+    def __init__(self):
+        super().__init__(arcade.make_soft_circle_texture(20, arcade.color.BLUE, 255, 50), 1, 3, 1.75, 125)
+        self.color = arcade.color.BLUE
+
+
+class FireBullet(Bullet):
+    def __init__(self):
+        super().__init__(arcade.make_soft_circle_texture(20, arcade.color.RED, 255, 150), 1.2, 4, 2, 175)
+        self.color = arcade.color.ORANGE
 
 
 class NormalEnemyBullet(Bullet):
