@@ -3,6 +3,7 @@ from pyglet.graphics import Batch
 import weapons
 import enemies
 import items
+import test_main
 
 
 SCREEN_WIDTH = 800
@@ -111,7 +112,7 @@ class Game(arcade.View):
         self.weapons_list = arcade.SpriteList()
         self.bullets_list = arcade.SpriteList()
         self.items_list = arcade.SpriteList()
-        
+
         self.emitters = []
 
         self.batch = Batch()
@@ -132,6 +133,8 @@ class Game(arcade.View):
 
         self.setup()
 
+        self.isLevelComp = False
+
     def setup(self):
         arcade.set_background_color(arcade.color.SKY_BLUE)
 
@@ -140,14 +143,14 @@ class Game(arcade.View):
         self.player.set_weapon_slot(weapons.DarkSword(self.player, 1), 1)
         self.player_list.append(self.player)
 
-        enemy = enemies.Enemy(300, 500, True, self.player, (255, 102, 0), 1)
+        enemy = enemies.Enemy(300, 500, True, self.player, (255, 102, 0), 100)
         self.enemy_list.append(enemy)
 
         item = items.WeaponItem(weapons.DiamondSword, 100, 100, self.player, 3)
         self.items_list.append(item)
 
         self.keys = set()
-  
+
         self.physics_engine.add_sprite_list(self.player_list, 1, 0, moment_of_inertia=arcade.PymunkPhysicsEngine.MOMENT_INF, collision_type='player')
         self.physics_engine.add_sprite_list(self.enemy_list, 1, 0, moment_of_inertia=arcade.PymunkPhysicsEngine.MOMENT_INF, collision_type='enemy')
 
@@ -192,7 +195,7 @@ class Game(arcade.View):
         for i in range(len(self.player.inventory)):
             rect = arcade.Rect(i * 70, i * 70 + 70, 0, 70, 70, 70, i * 70 + 35, 35)
             arcade.draw_texture_rect(self.slot_texture, rect)
-            
+
             if self.player.inventory[i] is not None:
                 try:
                     texture = self.player.inventory[i].source_texture
@@ -240,6 +243,14 @@ class Game(arcade.View):
                 self.showing_item = None
                 self.chosen_item = None
                 self.texts.clear()
+        elif symbol == arcade.key.Y:
+            self.toggle_level_completion()
+
+    def toggle_level_completion(self):
+        self.isLevelComp = not self.isLevelComp
+        from test_main import LevelTransitionView
+        level_transition_view = LevelTransitionView(self.window, self.isLevelComp)
+        self.window.show_view(level_transition_view)
 
     def on_key_release(self, symbol, modifiers):
         self.keys.discard(symbol)
@@ -270,7 +281,7 @@ class Game(arcade.View):
 
         self.texts.append(arcade.Text('ENTER чтобы подтвердить и Q чтобы выйти', 400, 150, font_size=20, anchor_x='center', anchor_y='center', batch=self.batch))
 
-    
+
 def main():
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     view = Game()
