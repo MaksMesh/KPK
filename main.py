@@ -293,6 +293,17 @@ class Game(arcade.View):
         if symbol == arcade.key.Y:
             self.toggle_level_completion()
 
+        if symbol == arcade.key.U:
+            import upgrade
+            game_view = upgrade.UpgradeWheel()
+            self.window.show_view(game_view)
+
+        if symbol == arcade.key.C:
+            import case
+            game_view = case.CaseWheel(100)
+            self.window.show_view(game_view)
+
+
     def toggle_level_completion(self):
         self.isLevelComp = not self.isLevelComp
         from test_main import LevelTransitionView
