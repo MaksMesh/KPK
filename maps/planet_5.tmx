@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="32" tileheight="32" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" source="assets/KPK_tiles_1.tsx"/>
+ <layer id="1" name="walls" width="60" height="60">
+  <data encoding="base64" compression="zlib">
+   eJztm+tuwjAMRr2x0Q12e/+nXSKI1tG0/XxBEcl3JIsfmJhDoTi4PInI8wBxSPGS4jXFMcWp8zineJv59s4kF993Gct3tONL3zpROVqi6mp8j9d8pC6ShxJZF/XVOkQ5R9dFfMv3spbz9bGesNZdc97ztdYsePsDK+W1voXn576hb99k3w8Zy3e040vffkH6DcvrUOuVND3wbWiZxN5vnDbuq1Gec+23lD1KXi1Qpo189P2MPl+RP9+Iz0fpZ9Hae7mPsB9EfSP3g+h6mjwU+trr0te3Xkvou4S+vvVaQt8l9PWt1xL6LmG/4VtPk4dCX3vdnnyRvHvMB1vu91vMB7fmfZbHanxF2swHrfO+qDkh54MX6Ns39O0b+vYNff/jvR5Je72Vth9bwzMftPb/Xlerc8R8UHuc1/o5LWWuihI9H0R7/hbXi0buB+e1kbrRoPv9PUY8P492/RV9+yWfB7Jv/j9O5H+a5rfR63rXyL6fKb4axPdG3KveT4pfcWAXSw==
+  </data>
+ </layer>
+</map>
