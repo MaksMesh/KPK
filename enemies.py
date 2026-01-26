@@ -254,6 +254,167 @@ class ShotgunEnemy(BasicShootingEnemy):
                 self.bullets_list.append(bullet)
 
 
+class BasicSwordEnemy(BasicEnemy):
+    def __init__(self, texture, scale, center_x, center_y, damage, reload, health, speed, x, y, r_d, weapon_range, weapon_speed, attack_distance, weapon_texture, weapon_scale, active, player, color, level):
+        super().__init__(texture, scale, center_x, center_y, damage, reload, health, speed, active, player, color, level)
+        self.x = x
+        self.y = y
+
+        self.attack_distance = attack_distance
+        self.weapon = arcade.Sprite(weapon_texture, 1.2, center_x + x, center_y + y)
+        self.player.weapons_list.append(self.weapon)
+
+        self.attacking = False
+        self.degrees = weapon_range
+        self.weapon_speed = weapon_speed
+        self.rotate_to = None
+        self.radius = r_d
+
+        self.hitted = set()
+
+    def update(self, delta_time):
+        distance = arcade.math.get_distance(*self.position, *self.player.position)
+
+        x, y = self.get_move()
+        self.physics_engines[0].apply_force(self, (x, y))
+
+        if distance <= self.attack_distance:
+            self.attack()
+
+        if not self.attacking:
+            self.weapon.center_x = self.center_x + self.x
+            self.weapon.center_y = self.center_y + self.y
+        else:
+            self.weapon.center_x = self.center_x + self.radius * math.sin(self.weapon.radians)
+            self.weapon.center_y = self.center_y + self.radius * math.cos(self.weapon.radians)
+
+            self.check_for_hit()
+
+            prev = self.rotate_to - self.weapon.angle
+            self.weapon.angle += self.weapon_speed * delta_time
+            now = self.rotate_to - self.weapon.angle
+
+            if (prev > 0 and now < 0) or (prev < 0 and now > 0):
+                self.end_attack()
+        
+        if self.time_left > 0:
+            self.time_left -= delta_time
+
+    def get_move(self):
+        if self.active:
+            angle = arcade.math.get_angle_radians(*self.position, *self.player.position)
+            move_x = math.sin(angle) * self.speed
+            move_y = math.cos(angle) * self.speed
+
+            return move_x, move_y
+
+        return 0, 0
+
+    def check_for_hit(self):
+        if arcade.check_for_collision(self.weapon, self.player):
+            if self.player not in self.hitted:
+                self.player.hurt(self.damage)
+                self.hitted.add(self.player)
+
+    def attack(self):
+        if not self.attacking and self.time_left <= 0:
+            self.attacking = True
+            middle = arcade.math.get_angle_degrees(self.center_x, self.center_y, self.player.center_x, self.player.center_y) + 90
+            
+            start = middle - self.degrees / 2
+            end = middle + self.degrees / 2
+
+            self.weapon.position = self.position
+            self.weapon.angle = start
+            self.rotate_to = end
+
+    def end_attack(self):
+        self.weapon.center_x = self.center_x + self.x
+        self.weapon.center_y = self.center_y + self.y
+        self.weapon.angle = 0
+        self.attacking = False
+        self.time_left = self.reload
+        self.hitted.clear()
+
+    def kill(self):
+        super().kill()
+        self.weapon.kill()
+
+
+class SwordEnemy(BasicSwordEnemy):
+    def __init__(self, x, y, active, player, color, level):
+        super().__init__('assets/images/enemies/sword_enemy.png', 1, x, y, 5, 1, 15, 3000, 50, 20, 70, 140, 200, 150, 'assets/images/weapons/swords/iron_sword.png', 1, active, player, color, level)
+
+
+class SummonerBoss(BasicEnemy):
+    def __init__(self, x, y, active, player, color, level, x1, y1, x2, y2):
+        super().__init__('assets/images/enemies/first_boss.png', 2, x, y, 10, 2, 200, 1500, active, player, color, level)
+        self.reload_bullet = 1
+        self.reload_bullet_now = self.reload_bullet
+
+        self.reload_summon = 2
+        self.reload_summon_now = self.reload_summon
+
+        self.reload_tp_now = random.randint(5, 10)
+
+        self.bullet = bullets.SummonerBossBullet()
+        self.bullets_list = arcade.SpriteList()
+        self.player.bullets_list.append(self.bullets_list)
+
+        self.x1 = x1 + self.width / 2
+        self.x2 = x2 - self.width / 2
+        self.y1 = y1 + self.height / 2
+        self.y2 = y2 - self.height / 2
+
+    def update(self, delta_time):
+        x, y = self.get_move()
+        self.physics_engines[0].apply_force(self, (x, y))
+
+        if self.reload_bullet_now > 0:
+            self.reload_bullet_now -= delta_time
+        else:
+            self.shoot()
+            self.reload_bullet_now = self.reload_bullet
+
+        if self.reload_tp_now > 0:
+            self.reload_tp_now -= delta_time
+        else:
+            self.tp()
+            self.reload_tp_now = random.randint(5, 10)
+
+        if self.reload_summon_now > 0:
+            self.reload_summon_now -= delta_time
+        else:
+            self.summon()
+            self.reload_summon_now = self.reload_summon
+
+        self.bullets_list.update(delta_time)
+
+        for bullet in self.bullets_list.sprite_list:
+            if arcade.check_for_collision(bullet, self.player):
+                self.player.hurt(bullet.get_damage())
+                bullet.kill()
+
+        self.attack()
+
+    def shoot(self):
+        bullet = self.bullet.shoot(self.center_x, self.center_y, self.player.center_x, self.player.center_y)
+        self.bullets_list.append(bullet)
+
+    def tp(self):
+        x = random.choice([self.x1, self.x2])
+        y = random.choice([self.y1, self.y2])
+
+        self.physics_engines[0].set_position(self, (x, y))
+
+    def summon(self):
+        pass
+
+    def kill(self):
+        super().kill()
+        self.bullets_list.clear()
+
+
 NORMAL_ENEMIES = [Enemy, FastEnemy, SlowEnemy, ShootingEnemy, DashingEnemy]
-ELITE_ENEMIES = [GoodShootingEnemy, ShotgunEnemy]
-BOSSES = []
+ELITE_ENEMIES = [GoodShootingEnemy, ShotgunEnemy, SwordEnemy]
+BOSSES = [SummonerBoss]

@@ -76,7 +76,7 @@ class BoomBulletBase(BulletBase):
 class SlipperBulletBase(BoomBulletBase):
     def __init__(self, x1, y1, x2, y2, damage_mod=1):
         lifetime = arcade.math.get_distance(x1, y1, x2, y2) / 300 - 0.15
-        super().__init__('assets/images/weapons/magic/slipper.png', 1.75, x1, y1, x2, y2, 12 * damage_mod, 10 * damage_mod, lifetime, 0.75, 80, 300)
+        super().__init__('assets/images/weapons/magic/slipper.png', 1.75, x1, y1, x2, y2, 7 * damage_mod, 5 * damage_mod, lifetime, 0.75, 80, 300)
 
 
 class Bullet:
@@ -142,8 +142,8 @@ class FireBullet(Bullet):
 class SlipperBullet:
     def __init__(self, damage_mod=1):
         self.damage_mod = damage_mod
-        self.first_damage = 12 * damage_mod
-        self.second_damage = 10 * damage_mod
+        self.first_damage = 7 * damage_mod
+        self.second_damage = 5 * damage_mod
 
     def shoot(self, x1, y1, x2, y2):
         return SlipperBulletBase(x1, y1, x2, y2, self.damage_mod)
@@ -162,3 +162,8 @@ class GoodEnemyBullet(Bullet):
 class ShotgunEnemyBullet(Bullet):
     def __init__(self):
         super().__init__('assets/images/bullets/insane_bullet.png', 1.5, 4, 1.5, 300)
+
+    
+class SummonerBossBullet(Bullet):
+    def __init__(self):
+        super().__init__('assets/images/bullets/summoner_boss_bullet.png', 1.5, 5, 1.5, 300)

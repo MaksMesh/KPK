@@ -636,6 +636,9 @@ class Slipper(Pistol):
         self.bullet.damage_mod *= self.player.modifiers.get('damage', 1)
         self.bullet.damage_mod *= self.level / 10 + 0.9
 
+        self.bullet.first_damage *= self.bullet.damage_mod 
+        self.bullet.second_damage *= self.bullet.damage_mod 
+
     def return_desc(self):
         return f'Уровень: {self.level}\nУрон тапка: {self.bullet.first_damage}\nУрон взрывом: {self.bullet.second_damage}\nПерезарядка: {self.reloading_time}'
 
