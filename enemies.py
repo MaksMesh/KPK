@@ -70,8 +70,8 @@ class BasicEnemy(arcade.Sprite):
                 self.time_left = self.reload
 
     def apply_level(self):
-        self.damage *= self.level / 10 + 0.9
-        self.health *= self.level / 10 + 0.9
+        self.damage *= self.level * 0.15 + 0.9
+        self.health *= self.level * 0.15 + 0.9
 
 
 class Enemy(BasicEnemy):
@@ -189,6 +189,71 @@ class GoodShootingEnemy(BasicShootingEnemy):
         super().__init__('assets/images/enemies/good_shooting_enemy.png', 1, x, y, 5, 0.75, 8, 3000, 50, 0, 60, 200, 600, 'assets/images/weapons/pistols/modern_pistol.png', 1.5, bullets.GoodEnemyBullet(), active, player, color, level)
 
 
-NORMAL_ENEMIES = [Enemy, FastEnemy, SlowEnemy, ShootingEnemy]
-ELITE_ENEMIES = [GoodShootingEnemy]
+class BasicDashingEnemy(BasicEnemy):
+    def __init__(self, texture, scale, center_x, center_y, damage, attack_reload, health, dash_reload, dash_speed, dash_duration, active, player, color, level):
+        super().__init__(texture, scale, center_x, center_y, damage, attack_reload, health, 0, active, player, color, level)
+        self.curr_dash_reload = dash_reload
+        self.dash_reload = dash_reload
+        self.dash_speed = dash_speed
+        self.dash_duration = dash_duration
+        self.dashing = False
+
+    def update(self, delta_time):
+        x, y = self.get_move()
+        self.physics_engines[0].apply_force(self, (x, y))
+        self.curr_dash_reload -= delta_time
+
+        if self.time_left > 0:
+            self.time_left -= delta_time
+
+        if self.curr_dash_reload <= 0:
+            if self.dashing:
+                self.dashing = False
+                self.speed = 0
+                self.curr_dash_reload = self.dash_reload
+            else:
+                self.dashing = True
+                self.speed = self.dash_speed
+                self.curr_dash_reload = self.dash_duration
+
+        self.attack()
+
+
+class DashingEnemy(BasicDashingEnemy):
+    def __init__(self, x, y, active, player, color, level):
+        super().__init__('assets/images/enemies/dashing_enemy.png', 1, x, y, 3, 1, 7, 0.5, 6500, 1, active, player, color, level)
+
+
+class ShotgunEnemy(BasicShootingEnemy):
+    def __init__(self, x, y, active, player, color, level):
+        super().__init__('assets/images/enemies/shotgun_enemy.png', 1, x, y, 4, 1.5, 8, 3000, 55, 0, 60, 300, 600, 'assets/images/weapons/pistols/shotgun.png', 1.2, bullets.ShotgunEnemyBullet(), active, player, color, level)
+
+    def attack(self):
+        if self.time_left <= 0:
+            self.time_left = self.reload
+            self.attacking = True
+
+            self.weapon.angle = arcade.math.get_angle_degrees(self.center_x, self.center_y, self.player.center_x, self.player.center_y)
+
+            if -90 < self.weapon.angle < 90:
+                self.weapon.texture = self.source_texture
+            else:
+                self.weapon.texture = self.source_texture.flip_vertically()
+
+            self.weapon.center_x = self.center_x + self.r_d * math.sin(self.weapon.radians + math.radians(90))
+            self.weapon.center_y = self.center_y + self.r_d * math.cos(self.weapon.radians + math.radians(90))
+
+
+            targets = [(self.player.center_x, self.player.center_y), 
+                       arcade.math.rotate_around_point((self.center_x, self.center_y), (self.player.center_x, self.player.center_y), -60),
+                       arcade.math.rotate_around_point((self.center_x, self.center_y), (self.player.center_x, self.player.center_y), 60)]
+
+            for x, y in targets:
+                bullet = self.bullet.shoot(self.center_x, self.center_y, x, y)
+                bullet.position = self.weapon.position
+                self.bullets_list.append(bullet)
+
+
+NORMAL_ENEMIES = [Enemy, FastEnemy, SlowEnemy, ShootingEnemy, DashingEnemy]
+ELITE_ENEMIES = [GoodShootingEnemy, ShotgunEnemy]
 BOSSES = []

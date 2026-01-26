@@ -68,3 +68,19 @@ class MechaArmor(BaseArmor):
         super().__init__('assets/images/armor/mecha_armor.png', player.scale, 25, player, level)
         self.rarity = 5
         self.name = 'Меха-броня'
+
+
+USUAL_RARITY_ARMOR = [WoodenArmor]
+UNUSUAL_RARITY_ARMOR = [IronArmor]
+RARE_RARITY_ARMOR = [DiamondArmor]
+EPIC_RARITY_ARMOR = [HolyArmor]
+LEGENDARY_RARITY_ARMOR = [MechaArmor]
+
+ARMORS = USUAL_RARITY_ARMOR + UNUSUAL_RARITY_ARMOR + RARE_RARITY_ARMOR + EPIC_RARITY_ARMOR + LEGENDARY_RARITY_ARMOR
+
+
+RARITY_TO_ARMOR = {1: USUAL_RARITY_ARMOR,
+                     2: UNUSUAL_RARITY_ARMOR,
+                     3: RARE_RARITY_ARMOR,
+                     4: EPIC_RARITY_ARMOR,
+                     5: LEGENDARY_RARITY_ARMOR}

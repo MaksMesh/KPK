@@ -12,7 +12,7 @@ SCREEN_TITLE = 'KPK'
 
 
 class Player(arcade.Sprite):
-    def __init__(self, texture, x, y, scale, slots, weapons_list, armor_list, bullets_list, enemies_list, items_list, emitters, modifiers={}):
+    def __init__(self, texture, x, y, scale, slots, money, weapons_list, armor_list, bullets_list, enemies_list, items_list, emitters, modifiers={}):
         super().__init__(texture, scale, x, y)
         self.modifiers = modifiers
         self.weapon = None
@@ -26,6 +26,7 @@ class Player(arcade.Sprite):
         self.items_list = items_list
         self.armor_list = armor_list
         self.speed = 5000 * modifiers.get('speed', 1)
+        self.money = money
 
         self.inventory = [None] * slots
         self.curr_slot = 0
@@ -71,6 +72,9 @@ class Player(arcade.Sprite):
             if self.health <= 0:
                 self.kill()
                 self.health = 0
+
+    def heal(self, health):
+        self.health = min([self.max_health, self.health + health])
 
     def kill(self):
         super().kill()
@@ -169,17 +173,23 @@ class Game(arcade.View):
     def setup(self):
         arcade.set_background_color(arcade.color.SKY_BLUE)
 
-        self.player = Player('assets/images/player/players/default-player.png', 400, 100, 0.5, 2, self.weapons_list, self.armor_list, self.bullets_list, self.enemy_list, self.items_list, self.emitters, {'damage': 2, 'health': 2, 'speed': 1.5})
-        self.player.set_weapon_slot(weapons.LightBook(self.player, 1), 0)
+        self.player = Player('assets/images/player/players/default-player.png', 400, 100, 0.5, 2, 100, self.weapons_list, self.armor_list, self.bullets_list, self.enemy_list, self.items_list, self.emitters, {'damage': 2, 'health': 2, 'speed': 1.5})
+        self.player.set_weapon_slot(weapons.Slipper(self.player, 1), 0)
         self.player.set_weapon_slot(weapons.DarkBook(self.player, 1), 1)
 
         self.player.set_armor(armor.HolyArmor(self.player, 1))
         self.player_list.append(self.player)
 
-        enemy = enemies.ShootingEnemy(300, 500, True, self.player, (255, 102, 0), 1)
+        enemy = enemies.ShotgunEnemy(300, 500, True, self.player, (255, 102, 0), 1)
         self.enemy_list.append(enemy)
 
         item = items.ArmorItem(armor.MechaArmor, 100, 100, self.player, 1)
+        self.items_list.append(item)
+
+        item = items.BoughtWeapon(weapons.WaterBook, 200, 100, self.player, 2, 50)
+        self.items_list.append(item)
+
+        item = items.Chest(300, 300, 2, self.player, 5)
         self.items_list.append(item)
 
         self.keys = set()
@@ -269,6 +279,14 @@ class Game(arcade.View):
                         if self.player.armor is None:
                             self.chosen_item = item
                             self.showing_item = item.armor(self.player, item.level)
+                    elif type(item) is items.BoughtWeapon:
+                        if self.player.inventory[self.player.curr_slot] is None:
+                            self.chosen_item = item
+                            self.showing_item = item.weapon(self.player, item.level)
+                    elif type(item) is items.BoughtArmor:
+                        if self.player.armor is None:
+                            self.chosen_item = item
+                            self.showing_item = item.armor(self.player, item.level)
                     else:
                         item.activate()
             elif symbol == arcade.key.Z:
@@ -279,13 +297,37 @@ class Game(arcade.View):
             if symbol == arcade.key.ENTER:
                 if type(self.chosen_item) is items.WeaponItem:
                     self.player.set_weapon_slot(self.showing_item, self.player.curr_slot)
+
+                    self.chosen_item.kill()
+                    self.showing_item = None
+                    self.chosen_item = None
+                    self.texts.clear()
                 elif type(self.chosen_item) is items.ArmorItem:
                     self.player.set_armor(self.showing_item)
 
-                self.chosen_item.kill()
-                self.showing_item = None
-                self.chosen_item = None
-                self.texts.clear()
+                    self.chosen_item.kill()
+                    self.showing_item = None
+                    self.chosen_item = None
+                    self.texts.clear()
+                elif type(self.chosen_item) is items.BoughtWeapon:
+                    if self.player.money >= self.chosen_item.money:
+                        self.player.money -= self.chosen_item.money
+                        self.player.set_weapon_slot(self.showing_item, self.player.curr_slot)
+
+                        self.chosen_item.kill()
+                        self.showing_item = None
+                        self.chosen_item = None
+                        self.texts.clear()
+                elif type(self.chosen_item) is items.BoughtArmor:
+                    if self.player.money >= self.chosen_item.money:
+                        self.player.money -= self.chosen_item.money
+                        self.player.set_armor(self.showing_item)
+
+                        self.chosen_item.kill()
+                        self.showing_item = None
+                        self.chosen_item = None
+                        self.texts.clear()
+
             elif symbol == arcade.key.Q:
                 self.showing_item = None
                 self.chosen_item = None
@@ -337,7 +379,14 @@ class Game(arcade.View):
         for i in range(len(texts)):
             self.texts.append(arcade.Text(texts[i], 265, 310 - 20 * i, font_size=10, batch=self.batch))
 
-        self.texts.append(arcade.Text('ENTER чтобы подтвердить и Q чтобы выйти', 400, 150, font_size=20, anchor_x='center', anchor_y='center', batch=self.batch))
+        if type(self.chosen_item) is items.BoughtWeapon or type(self.chosen_item) is items.BoughtArmor:
+            text_y = 100
+            self.texts.append(arcade.Text(f'Цена предмета: {self.chosen_item.money}', 400, 150, font_size=20, anchor_x='center', anchor_y='center', batch=self.batch))
+            self.texts.append(arcade.Text(f'Баланс: {self.player.money}', 10, 580, font_size=20, anchor_y='center', batch=self.batch))
+        else:
+            text_y = 150
+
+        self.texts.append(arcade.Text('ENTER чтобы подтвердить и Q чтобы выйти', 400, text_y, font_size=20, anchor_x='center', anchor_y='center', batch=self.batch))
 
     
 def main():
