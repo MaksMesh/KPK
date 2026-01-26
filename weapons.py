@@ -34,6 +34,20 @@ def make_explosion(x, y, texture, count=80):
     )
 
 
+def make_big_explosion(x, y, texture, count=80):
+    return arcade.particles.Emitter(
+        center_xy=(x, y),
+        emit_controller=arcade.particles.EmitBurst(count),
+        particle_factory=lambda e: arcade.particles.FadeParticle(
+            filename_or_texture=texture,
+            change_xy=arcade.math.rand_in_circle((0.0, 0.0), 7.5),
+            lifetime=random.uniform(0.3, 0.8),
+            start_alpha=255, end_alpha=0,
+            scale=random.uniform(0.55, 0.8)
+        ),
+    )
+
+
 class BasicSword(arcade.Sprite):
     def __init__(self, texture, scale, x, y, radius, damage, degrees, speed, reloading, player, level):
         super().__init__(texture, scale)
@@ -557,11 +571,82 @@ class LightBook(AreaBook):
         self.name = 'Книга света'
 
 
+class Slipper(Pistol):
+    def __init__(self, player, level):
+        super().__init__('assets/images/weapons/magic/slipper.png', 1.75, 40, 0, 45, bullets.SlipperBullet(), 0.9, None, player, level)
+        self.rarity = 5
+        self.name = 'Тапочек'
+        self.particle_texture = arcade.make_circle_texture(15, arcade.color.PINK)
+
+    def update(self, delta_time):
+        if not self.attacking:
+            self.angle = 0
+            self.texture = self.source_texture
+            self.center_x = self.player.center_x + self.x
+            self.center_y = self.player.center_y + self.y
+        else:
+            self.center_x = self.player.center_x + self.r_d * math.sin(self.radians + math.radians(90))
+            self.center_y = self.player.center_y + self.r_d * math.cos(self.radians + math.radians(90))
+
+        for bullet in self.bullets_list.sprite_list:
+            enemies = arcade.check_for_collision_with_list(bullet, self.enemies_list)
+
+            for enemy in enemies:
+                if enemy in bullet.attacked:
+                    continue
+
+                enemy.hurt(bullet.get_damage())
+                bullet.attacked.add(enemy)
+
+            if bullet.want_boom:
+                self.player.emitters.append(make_big_explosion(bullet.center_x, bullet.center_y, self.particle_texture, 40))
+                bullet.want_boom = False
+
+        self.bullets_list.update(delta_time)
+
+        if self.time_left > 0:
+            self.time_left -= delta_time
+        else:
+            self.attacking = False
+            self.alpha = 255
+
+    def attack(self, x, y):
+        if self.time_left <= 0:
+            self.attacking = True
+            self.alpha = 0
+
+            self.angle = arcade.math.get_angle_degrees(self.player.center_x, self.player.center_y, x, y)
+
+            if -90 < self.angle < 90:
+                self.texture = self.source_texture
+            else:
+                self.texture = self.source_texture.flip_vertically()
+
+            self.center_x = self.player.center_x + self.r_d * math.sin(self.radians + math.radians(90))
+            self.center_y = self.player.center_y + self.r_d * math.cos(self.radians + math.radians(90))
+
+            self.time_left = self.reloading_time
+
+            bullet = self.bullet.shoot(self.player.center_x, self.player.center_y, x, y)
+            bullet.position = self.position
+            bullet.attacked = set()
+            self.bullets_list.append(bullet)
+
+    def apply_level(self):
+        self.bullet.damage_mod *= self.player.modifiers.get('damage', 1)
+        self.bullet.damage_mod *= self.level / 10 + 0.9
+
+    def return_desc(self):
+        return f'Уровень: {self.level}\nУрон тапка: {self.bullet.first_damage}\nУрон взрывом: {self.bullet.second_damage}\nПерезарядка: {self.reloading_time}'
+
+
 USUAL_RARITY_WEAPONS = [WoodenSword, OldPistol, WaterBook]
 UNUSUAL_RARITY_WEAPONS = [IronSword, ModernPistol, FireBook]
 RARE_RARITY_WEAPONS = [DiamondSword, PrimitiveSniper, SpreadingPistol, DarkBook]
 EPIC_RARITY_WEAPONS = [DarkSword, Sniper, GoodSpreadingPistol, LightBook]
-LEGENDARY_RARITY_WEAPONS = [ChaosSaber, Shotgun]
+LEGENDARY_RARITY_WEAPONS = [ChaosSaber, Shotgun, Slipper]
+
+WEAPONS = USUAL_RARITY_WEAPONS + UNUSUAL_RARITY_WEAPONS + RARE_RARITY_WEAPONS + EPIC_RARITY_WEAPONS + LEGENDARY_RARITY_WEAPONS
 
 RARITY_TO_WEAPONS = {1: USUAL_RARITY_WEAPONS,
                      2: UNUSUAL_RARITY_WEAPONS,
