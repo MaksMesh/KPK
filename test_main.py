@@ -113,6 +113,11 @@ class LevelTransitionView(arcade.View):
         self.window.set_mouse_visible(True)
         self.game = game_instance
         self.level_graph = LevelGraph()
+        self.maps = {"Планета верх": "maps/planet_1.tmx",
+                     "Планета низ": "maps/planet_2.tmx",
+                     "Планета 1": "maps/planet_3.tmx",
+                     "Планета 2": "maps/planet_4.tmx",
+                     "Планета Железяка": "maps/planet_5.tmx"}
 
         try:
             self.level_graph.load_from_file('assets/levels/level_graph.json')
@@ -306,7 +311,10 @@ class LevelTransitionView(arcade.View):
         if key == arcade.key.SPACE and self.selected_node:
             if not self.selected_node.completed:
                 if self.level_graph.move_to_node(self.selected_node.level_id):
-                    self.window.show_view(self.game)
+                    import maps_generator
+                    maps_generator_view = maps_generator.GridGame(self.maps[self.selected_node.name])
+                    self.window.show_view(maps_generator_view)
+                    # self.window.show_view(self.game)
                     self.game.start_level(self.selected_node.level_id)
                 else:
                     self.selected_info_text = arcade.Text(

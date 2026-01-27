@@ -147,7 +147,6 @@ class Game(arcade.View):
         self.items_list = arcade.SpriteList()
         self.armor_list = arcade.SpriteList()
 
-
         self.emitters = []
 
         self.batch = Batch()
@@ -344,7 +343,6 @@ class Game(arcade.View):
             import case
             game_view = case.CaseWheel(100)
             self.window.show_view(game_view)
-
 
     def toggle_level_completion(self):
         self.isLevelComp = not self.isLevelComp
