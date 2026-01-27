@@ -166,6 +166,8 @@ class Game(arcade.View):
         self.chosen_item = None
 
         self.isLevelComp = False
+        self.level_completion_timer = 0
+        self.level_completion_triggered = False
 
         self.setup()
 
@@ -210,6 +212,15 @@ class Game(arcade.View):
             self.physics_engine.step(delta_time)
             self.player_list.update(delta_time, self.keys)
 
+        if not self.enemy_list.sprite_list and not self.level_completion_triggered:
+            self.level_completion_triggered = True
+            self.level_completion_timer = 10.0  # 10 секунд
+
+        if self.level_completion_timer > 0:
+            self.level_completion_timer -= delta_time
+            if self.level_completion_timer <= 0:
+                self.toggle_level_completion()
+
     def on_draw(self):
         self.clear()
 
@@ -228,6 +239,7 @@ class Game(arcade.View):
 
         self.draw_gui()
         self.batch.draw()
+
 
     def draw_gui(self):
         rect = arcade.Rect(550, SCREEN_WIDTH, 0, 70, 250, 70, 675, 35)
@@ -259,6 +271,7 @@ class Game(arcade.View):
 
         if self.showing_item is not None:
             self.draw_item()
+
 
     def on_key_press(self, symbol, modifiers):
         self.keys.add(symbol)
@@ -347,7 +360,8 @@ class Game(arcade.View):
     def toggle_level_completion(self):
         self.isLevelComp = not self.isLevelComp
         from test_main import LevelTransitionView
-        level_transition_view = LevelTransitionView(self.window, self.isLevelComp)
+        level_transition_view = LevelTransitionView(self, self.isLevelComp)
+        level_transition_view.complete_current_level()
         self.window.show_view(level_transition_view)
 
     def on_key_release(self, symbol, modifiers):
@@ -385,6 +399,8 @@ class Game(arcade.View):
             text_y = 150
 
         self.texts.append(arcade.Text('ENTER чтобы подтвердить и Q чтобы выйти', 400, text_y, font_size=20, anchor_x='center', anchor_y='center', batch=self.batch))
+
+
 
     
 def main():
