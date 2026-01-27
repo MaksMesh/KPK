@@ -36,13 +36,14 @@ class BasicEnemy(arcade.Sprite):
         self.apply_level()
 
     def update(self, delta_time):
-        x, y = self.get_move()
-        self.physics_engines[0].apply_force(self, (x, y))
+        if self.active:
+            x, y = self.get_move()
+            self.physics_engines[0].apply_force(self, (x, y))
 
-        if self.time_left > 0:
-            self.time_left -= delta_time
+            if self.time_left > 0:
+                self.time_left -= delta_time
 
-        self.attack()
+            self.attack()
 
     def get_move(self):
         if self.active:
@@ -110,34 +111,35 @@ class BasicShootingEnemy(BasicEnemy):
         self.bullet.damage = self.damage
 
     def update(self, delta_time):
-        distance = arcade.math.get_distance(*self.position, *self.player.position)
+        if self.active:
+            distance = arcade.math.get_distance(*self.position, *self.player.position)
 
-        x, y = self.get_move(distance)
-        self.physics_engines[0].apply_force(self, (x, y))
+            x, y = self.get_move(distance)
+            self.physics_engines[0].apply_force(self, (x, y))
 
-        if distance <= self.attack_distance:
-            self.attack()
+            if distance <= self.attack_distance:
+                self.attack()
 
-        if not self.attacking:
-            self.weapon.angle = 0
-            self.weapon.texture = self.source_texture
-            self.weapon.center_x = self.center_x + self.x
-            self.weapon.center_y = self.center_y + self.y
-        else:
-            self.weapon.center_x = self.center_x + self.r_d * math.sin(self.weapon.radians + math.radians(90))
-            self.weapon.center_y = self.center_y + self.r_d * math.cos(self.weapon.radians + math.radians(90))
+            if not self.attacking:
+                self.weapon.angle = 0
+                self.weapon.texture = self.source_texture
+                self.weapon.center_x = self.center_x + self.x
+                self.weapon.center_y = self.center_y + self.y
+            else:
+                self.weapon.center_x = self.center_x + self.r_d * math.sin(self.weapon.radians + math.radians(90))
+                self.weapon.center_y = self.center_y + self.r_d * math.cos(self.weapon.radians + math.radians(90))
 
-        for bullet in self.bullets_list.sprite_list:
-            if arcade.check_for_collision(bullet, self.player):
-                self.player.hurt(bullet.get_damage())
-                bullet.kill()
+            for bullet in self.bullets_list.sprite_list:
+                if arcade.check_for_collision(bullet, self.player):
+                    self.player.hurt(bullet.get_damage())
+                    bullet.kill()
 
-        self.bullets_list.update(delta_time)
+            self.bullets_list.update(delta_time)
 
-        if self.time_left > 0:
-            self.time_left -= delta_time
-        else:
-            self.attacking = False
+            if self.time_left > 0:
+                self.time_left -= delta_time
+            else:
+                self.attacking = False
 
     def get_move(self, distance):
         if self.active and distance > self.distance:
@@ -199,24 +201,25 @@ class BasicDashingEnemy(BasicEnemy):
         self.dashing = False
 
     def update(self, delta_time):
-        x, y = self.get_move()
-        self.physics_engines[0].apply_force(self, (x, y))
-        self.curr_dash_reload -= delta_time
+        if self.active:
+            x, y = self.get_move()
+            self.physics_engines[0].apply_force(self, (x, y))
+            self.curr_dash_reload -= delta_time
 
-        if self.time_left > 0:
-            self.time_left -= delta_time
+            if self.time_left > 0:
+                self.time_left -= delta_time
 
-        if self.curr_dash_reload <= 0:
-            if self.dashing:
-                self.dashing = False
-                self.speed = 0
-                self.curr_dash_reload = self.dash_reload
-            else:
-                self.dashing = True
-                self.speed = self.dash_speed
-                self.curr_dash_reload = self.dash_duration
+            if self.curr_dash_reload <= 0:
+                if self.dashing:
+                    self.dashing = False
+                    self.speed = 0
+                    self.curr_dash_reload = self.dash_reload
+                else:
+                    self.dashing = True
+                    self.speed = self.dash_speed
+                    self.curr_dash_reload = self.dash_duration
 
-        self.attack()
+            self.attack()
 
 
 class DashingEnemy(BasicDashingEnemy):
@@ -273,32 +276,33 @@ class BasicSwordEnemy(BasicEnemy):
         self.hitted = set()
 
     def update(self, delta_time):
-        distance = arcade.math.get_distance(*self.position, *self.player.position)
+        if self.active:
+            distance = arcade.math.get_distance(*self.position, *self.player.position)
 
-        x, y = self.get_move()
-        self.physics_engines[0].apply_force(self, (x, y))
+            x, y = self.get_move()
+            self.physics_engines[0].apply_force(self, (x, y))
 
-        if distance <= self.attack_distance:
-            self.attack()
+            if distance <= self.attack_distance:
+                self.attack()
 
-        if not self.attacking:
-            self.weapon.center_x = self.center_x + self.x
-            self.weapon.center_y = self.center_y + self.y
-        else:
-            self.weapon.center_x = self.center_x + self.radius * math.sin(self.weapon.radians)
-            self.weapon.center_y = self.center_y + self.radius * math.cos(self.weapon.radians)
+            if not self.attacking:
+                self.weapon.center_x = self.center_x + self.x
+                self.weapon.center_y = self.center_y + self.y
+            else:
+                self.weapon.center_x = self.center_x + self.radius * math.sin(self.weapon.radians)
+                self.weapon.center_y = self.center_y + self.radius * math.cos(self.weapon.radians)
 
-            self.check_for_hit()
+                self.check_for_hit()
 
-            prev = self.rotate_to - self.weapon.angle
-            self.weapon.angle += self.weapon_speed * delta_time
-            now = self.rotate_to - self.weapon.angle
+                prev = self.rotate_to - self.weapon.angle
+                self.weapon.angle += self.weapon_speed * delta_time
+                now = self.rotate_to - self.weapon.angle
 
-            if (prev > 0 and now < 0) or (prev < 0 and now > 0):
-                self.end_attack()
-        
-        if self.time_left > 0:
-            self.time_left -= delta_time
+                if (prev > 0 and now < 0) or (prev < 0 and now > 0):
+                    self.end_attack()
+            
+            if self.time_left > 0:
+                self.time_left -= delta_time
 
     def get_move(self):
         if self.active:
@@ -367,35 +371,39 @@ class SummonerBoss(BasicEnemy):
         self.y2 = y2 - self.height / 2
 
     def update(self, delta_time):
-        x, y = self.get_move()
-        self.physics_engines[0].apply_force(self, (x, y))
+        if self.active:
+            x, y = self.get_move()
+            self.physics_engines[0].apply_force(self, (x, y))
 
-        if self.reload_bullet_now > 0:
-            self.reload_bullet_now -= delta_time
-        else:
-            self.shoot()
-            self.reload_bullet_now = self.reload_bullet
+            if self.reload_bullet_now > 0:
+                self.reload_bullet_now -= delta_time
+            else:
+                self.shoot()
+                self.reload_bullet_now = self.reload_bullet
 
-        if self.reload_tp_now > 0:
-            self.reload_tp_now -= delta_time
-        else:
-            self.tp()
-            self.reload_tp_now = random.randint(5, 10)
+            if self.reload_tp_now > 0:
+                self.reload_tp_now -= delta_time
+            else:
+                self.tp()
+                self.reload_tp_now = random.randint(5, 10)
 
-        if self.reload_summon_now > 0:
-            self.reload_summon_now -= delta_time
-        else:
-            self.summon()
-            self.reload_summon_now = self.reload_summon
+            if self.reload_summon_now > 0:
+                self.reload_summon_now -= delta_time
+            else:
+                self.summon()
+                self.reload_summon_now = self.reload_summon
 
-        self.bullets_list.update(delta_time)
+            if self.time_left > 0:
+                self.time_left -= delta_time
 
-        for bullet in self.bullets_list.sprite_list:
-            if arcade.check_for_collision(bullet, self.player):
-                self.player.hurt(bullet.get_damage())
-                bullet.kill()
+            self.bullets_list.update(delta_time)
 
-        self.attack()
+            for bullet in self.bullets_list.sprite_list:
+                if arcade.check_for_collision(bullet, self.player):
+                    self.player.hurt(bullet.get_damage())
+                    bullet.kill()
+
+            self.attack()
 
     def shoot(self):
         bullet = self.bullet.shoot(self.center_x, self.center_y, self.player.center_x, self.player.center_y)
@@ -408,7 +416,12 @@ class SummonerBoss(BasicEnemy):
         self.physics_engines[0].set_position(self, (x, y))
 
     def summon(self):
-        pass
+        x = random.choice([self.x1, self.x2])
+        y = random.choice([self.y1, self.y2])
+
+        enemy = Enemy(x, y, True, self.player, self.color, self.level)
+        self.physics_engines[0].add_sprite(enemy, 1, 0, moment_of_inertia=arcade.PymunkPhysicsEngine.MOMENT_INF, collision_type='enemy')
+        self.player.enemies_list.append(enemy)
 
     def kill(self):
         super().kill()

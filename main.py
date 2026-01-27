@@ -12,7 +12,7 @@ SCREEN_TITLE = 'KPK'
 
 
 class Player(arcade.Sprite):
-    def __init__(self, texture, x, y, scale, slots, money, weapons_list, armor_list, bullets_list, enemies_list, items_list, emitters, modifiers={}):
+    def __init__(self, texture, x, y, scale, slots, money, upgrade_crystals, weapons_list, armor_list, bullets_list, enemies_list, items_list, emitters, modifiers={}):
         super().__init__(texture, scale, x, y)
         self.modifiers = modifiers
         self.weapon = None
@@ -27,6 +27,7 @@ class Player(arcade.Sprite):
         self.armor_list = armor_list
         self.speed = 5000 * modifiers.get('speed', 1)
         self.money = money
+        self.upgrade_crystals = upgrade_crystals
 
         self.inventory = [None] * slots
         self.curr_slot = 0
@@ -170,14 +171,14 @@ class Game(arcade.View):
     def setup(self):
         arcade.set_background_color(arcade.color.SKY_BLUE)
 
-        self.player = Player('assets/images/player/players/default-player.png', 400, 100, 0.5, 2, 100, self.weapons_list, self.armor_list, self.bullets_list, self.enemy_list, self.items_list, self.emitters, {'damage': 2, 'health': 2, 'speed': 1.5})
+        self.player = Player('assets/images/player/players/default-player.png', 400, 100, 0.5, 2, 100, 0, self.weapons_list, self.armor_list, self.bullets_list, self.enemy_list, self.items_list, self.emitters, {'damage': 2, 'health': 2, 'speed': 1.5})
         self.player.set_weapon_slot(weapons.Slipper(self.player, 1), 0)
         self.player.set_weapon_slot(weapons.IronSword(self.player, 1), 1)
 
         self.player.set_armor(armor.HolyArmor(self.player, 1))
         self.player_list.append(self.player)
 
-        self.enemy = enemies.SummonerBoss(300, 300, True, self.player, (255, 102, 0), 1, 0, 0, 600, 600)
+        self.enemy = enemies.SummonerBoss(300, 300, False, self.player, (255, 102, 0), 1, 0, 0, 600, 600)
         self.enemy_list.append(self.enemy)
 
         item = items.ArmorItem(armor.MechaArmor, 100, 100, self.player, 1)

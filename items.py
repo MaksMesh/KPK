@@ -84,6 +84,7 @@ class Chest(Item):
         weaponss = random.randint(0, 2)
         armors = random.randint(0, 2)
         money_count = random.randint(1, 10 + self.player.modifiers.get('lucky', 0))
+        upgrade_crystals = random.randint(0, 1)
 
         for _ in range(weaponss):
             level = random.randint(min_level, max_level)
@@ -125,6 +126,9 @@ class Chest(Item):
 
         for _ in range(money_count):
             loot.append(Money(1, self.center_x, self.center_y, self.player))
+
+        for _ in range(upgrade_crystals):
+            loot.append(UpgradeCrystal(1.5, self.center_x, self.center_y, self.player))
 
         loot.append(random.choice([Olyvie, Donut, Heart])(1.5, self.center_x, self.center_y, self.player))
 
@@ -199,3 +203,16 @@ class Heart(HealingItem):
     
     def get_heal(self):
         return self.player.max_health
+
+
+class UpgradeCrystal(Item):
+    def __init__(self, scale, x, y, player):
+        super().__init__('assets/images/items/upgrade_crystal.png', scale, x, y)
+        self.player = player
+
+    def activate(self):
+        self.player.upgrade_crystals += 1
+        self.kill()
+
+    def get_distance(self):
+        return arcade.math.get_distance(*self.player.position, *self.position)
