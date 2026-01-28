@@ -1,5 +1,7 @@
 import arcade
 from pyglet.graphics import Batch
+from arcade.gui import UIManager, UITextureButton
+from arcade.gui.widgets.layout import UIAnchorLayout, UIBoxLayout
 import weapons
 import armor
 import enemies
@@ -12,7 +14,7 @@ SCREEN_TITLE = 'KPK'
 
 
 class Player(arcade.Sprite):
-    def __init__(self, texture, x, y, scale, slots, money, upgrade_crystals, weapons_list, armor_list, bullets_list, enemies_list, items_list, emitters, modifiers={}):
+    def __init__(self, texture, x, y, scale, money, upgrade_crystals, weapons_list, armor_list, bullets_list, enemies_list, items_list, emitters, modifiers={}):
         super().__init__(texture, scale, x, y)
         self.modifiers = modifiers
         self.weapon = None
@@ -29,7 +31,7 @@ class Player(arcade.Sprite):
         self.money = money
         self.upgrade_crystals = upgrade_crystals
 
-        self.inventory = [None] * slots
+        self.inventory = [None] * modifiers.get('inventory', 1)
         self.curr_slot = 0
 
     def update(self, delta_time, keys):
@@ -171,7 +173,7 @@ class Game(arcade.View):
     def setup(self):
         arcade.set_background_color(arcade.color.SKY_BLUE)
 
-        self.player = Player('assets/images/player/players/default-player.png', 400, 100, 0.5, 2, 100, 0, self.weapons_list, self.armor_list, self.bullets_list, self.enemy_list, self.items_list, self.emitters, {'damage': 2, 'health': 2, 'speed': 1.5})
+        self.player = Player('assets/images/player/players/default-player.png', 400, 100, 0.5, 100, 0, self.weapons_list, self.armor_list, self.bullets_list, self.enemy_list, self.items_list, self.emitters, {'damage': 2, 'health': 2, 'speed': 1.5, 'inventory': 2, 'lucky': 2})
         self.player.set_weapon_slot(weapons.Slipper(self.player, 1), 0)
         self.player.set_weapon_slot(weapons.IronSword(self.player, 1), 1)
 
@@ -291,6 +293,9 @@ class Game(arcade.View):
                 self.player.drop_item()
             elif symbol == arcade.key.X:
                 self.player.drop_armor()
+            elif symbol == arcade.key.ESCAPE:
+                self.keys = set()
+                self.window.show_view(PauseView(self, self.player.money, self.player.upgrade_crystals))
         else:
             if symbol == arcade.key.ENTER:
                 if type(self.chosen_item) is items.WeaponItem:
@@ -366,6 +371,63 @@ class Game(arcade.View):
             text_y = 150
 
         self.texts.append(arcade.Text('ENTER чтобы подтвердить и Q чтобы выйти', 400, text_y, font_size=20, anchor_x='center', anchor_y='center', batch=self.batch))
+
+
+class PauseView(arcade.View):
+    def __init__(self, game, money, upgrade_shards):
+        super().__init__()
+        self.game = game
+        self.batch = Batch()
+        self.bg = arcade.load_texture('assets/images/gui/pause.png')
+        self.bg_pos = arcade.Rect(0, self.width, 0, self.height, self.width, self.height, self.width / 2, self.height / 2)
+
+        self.money_texture = arcade.load_texture('assets/images/items/money.png')
+        self.upgrade_texture = arcade.load_texture('assets/images/items/upgrade_crystal.png')
+
+        self.money_pos = arcade.Rect(760, 790, 560, 590, 30, 30, 775, 575)
+        self.upgrade_pos = arcade.Rect(760, 790, 520, 550, 30, 30, 775, 535)
+
+        self.money_text = arcade.Text(str(money), 755, 575, font_size=15, anchor_x='right', anchor_y='center', batch=self.batch)
+        self.upgrade_text = arcade.Text(str(upgrade_shards), 755, 535, font_size=15, anchor_x='right', anchor_y='center', batch=self.batch)
+
+        self.setup_gui()
+
+    def setup_gui(self):
+        self.button_texture = arcade.load_texture('assets/images/gui/start_button.png')
+        self.button_texture_hovered = arcade.load_texture('assets/images/gui/hovered_start_button.png')
+
+        self.manager = UIManager()
+        self.manager.enable()
+
+        self.anchor_layout = UIAnchorLayout(x=0, y=-200)
+        self.box_layout = UIBoxLayout(vertical=True, space_between=20) 
+    
+        self.start_button = UITextureButton(texture=self.button_texture, texture_hovered=self.button_texture_hovered, text='Вернуться к игре')
+        self.start_button.on_click = self.return_to_game
+        self.box_layout.add(self.start_button)
+
+        self.exit_button = UITextureButton(texture=self.button_texture, texture_hovered=self.button_texture_hovered, text='Выход')
+        self.exit_button.on_click = lambda x: exit()
+        self.box_layout.add(self.exit_button)
+        
+        self.anchor_layout.add(self.box_layout)
+        self.manager.add(self.anchor_layout)
+
+    def on_draw(self):
+        arcade.draw_texture_rect(self.bg, self.bg_pos)
+
+        arcade.draw_texture_rect(self.money_texture, self.money_pos)
+        arcade.draw_texture_rect(self.upgrade_texture, self.upgrade_pos)
+
+        self.batch.draw()
+        self.manager.draw()
+
+    def on_key_press(self, symbol, mods):
+        if symbol == arcade.key.ESCAPE:
+            self.return_to_game()
+
+    def return_to_game(self, *args):
+        self.window.show_view(self.game)
 
     
 def main():
