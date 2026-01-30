@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="240" height="240" tilewidth="32" tileheight="32" infinite="0" nextlayerid="2" nextobjectid="1">
- <tileset firstgid="1" source="assets/KPK_tiles_1.tsx"/>
- <layer id="1" name="walls" width="240" height="240">
-  <data encoding="base64" compression="zlib">
-   eJzt00sKwlAURMHrDwyY6P5X68sWnMiBKuh5T85lZq5rNzNL7b72GKDoOfqFqtfoF6r0C136hS79Qpd+oUu/0KVf6NIvdOkXuvQLXfqFLv1Cl36hS7/QpV/o0i906Re69Atd+oUu/UKXfqFLv9ClX+jSL3TpF7r0C136hS79Qpd+oUu/0KVf6NIvdOkXuvQLXfqFLv1Cl36hS7/QpV/o0i906Re69Atd+oUu/UKXfqFLv9ClX+jSL3TpF7r0C136hS79Qpd+oUu/0KVf6NIvdOkXuvQLXfqFLv1Cl36hS7/QpV/o0i906Re69Atd+oUu/UKXfqFLv9ClX+jSL3TpF7r0C136hS79Qpd+oUu/0KVf6NIvdOkXuvQLXfqFLv1Cl36hS7/QpV/o0i906Re69Atd+oUu/UKXfqFLv9ClX+jSL3TpF7r0C136hS79Qpd+oUu/0KVf6NIvdOkXuvQLXfqFLv1Cl36hS7/QpV/o0i906Re69Atd+oUu/UKXfqFLv9ClX+jSL3TpF7r0C136hS79Qpd+oUu/0KVf6NIvdOkXuvQLXfqFLv1Cl36hS7/QpV/o0i906Re69Atd+oUu/UKXfqFLv9ClX+jSL3TpF7r0C136hS79Qpd+oUu/0KVf6NIvdOkXuvQLXfqFLv1Cl36hS7/QpV/o0i906Re69Atd+oUu/UKXfqFLv9ClX+jSL3TpF7r0C136hS79Qpd+oUu/0KVf6NIvdOkXuvQLXfqFLv1Cl36hS7/QpV/o0i906Re69Atd+oUu/UKXfqFLv9ClX+jSL3TpF7r0C136hS79Qpd+oUu/0KVf6NIvdOkXuvQLXfqFLv1Cl36hS7/QpV/o0i906Re69Atd+oUu/UKXfqFLv9ClX+jSL3TpF7r0C136hS79Qpd+oUu/0KVf6NIvdOkXuvQLXfqFLv1Cl36hS7/QpV/o0i906Re69Atd+oWus9/t3yeAn5z97muHmaX2XvusfQGf1R+/
-  </data>
- </layer>
-</map>
