@@ -1,1 +1,1 @@
-## Kolobokc's Cosmos Voyage (Kosmicheskie Preklyucheniya Kolobka) 
+## Kolobok's Cosmos Voyage (Kosmicheskie Pohozhdeniya Kolobka) 
