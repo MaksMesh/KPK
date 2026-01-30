@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="60" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" source="assets/KPK_tiles_1.tsx"/>
+ <layer id="1" name="walls" width="60" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztmGsLgzAMReNjouB0///XLtAvY1aWpKHr4x64X0obOVZLdCCisYNMnJnzoCtLZMyTWP3Ua0rWr3TvG4sXpfla60mBbz7fzbGe9D24G5O+Q9b75b2/GjfrmHbuJ97nVc2+FuCb1/fX81iSr7SeZv038E2rB996fKV9g2WOR79hiWZ/PfvJfwHfAHz79JVEivXMSYnm+6gF4Ns28A3kOj9y490/lw58Ay37xv7Htuq7c56cg3N2kBfnDUjHCos=
+  </data>
+ </layer>
+</map>

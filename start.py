@@ -83,14 +83,14 @@ class StartScreen(arcade.View):
         self.setup()
 
     def setup(self):
-        game_name = 'KPK'
+        game_name = 'Космические Похождения Колобка'
 
         self.phone_texture = arcade.load_texture('assets/images/gui/start_picture.png')
         self.phone_rect = arcade.Rect(0, self.width, 0, self.height, self.width, self.height, self.width / 2, self.height / 2)
         self.button_texture = arcade.load_texture('assets/images/gui/start_button.png')
         self.button_texture_hovered = arcade.load_texture('assets/images/gui/hovered_start_button.png')
 
-        self.text = arcade.Text(game_name, 50, 530, arcade.color.WHITE, 40, batch=self.batch)
+        self.text = arcade.Text(game_name, 50, 530, arcade.color.WHITE, 36, batch=self.batch)
 
         self.manager = UIManager()
         self.manager.enable()
