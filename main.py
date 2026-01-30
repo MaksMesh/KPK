@@ -795,17 +795,6 @@ class Game(arcade.View):
                 arcade.stop_sound(self.music_player)
                 self.window.show_view(StartScreen())
 
-        if symbol == arcade.key.U:
-            import upgrade
-            game_view = upgrade.UpgradeWheel()
-            self.window.show_view(game_view)
-
-        if symbol == arcade.key.C:
-            import case
-            game_view = case.CaseWheel(100)
-            self.window.show_view(game_view)
-
-
     def toggle_level_completion(self):
         from planet_generation import LevelTransitionView
         arcade.stop_sound(self.music_player)
