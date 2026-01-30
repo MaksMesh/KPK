@@ -166,4 +166,4 @@ class ShotgunEnemyBullet(Bullet):
     
 class SummonerBossBullet(Bullet):
     def __init__(self):
-        super().__init__('assets/images/bullets/summoner_boss_bullet.png', 1.5, 5, 1.5, 300)
+        super().__init__('assets/images/bullets/summoner_boss_bullet.png', 1.5, 5, 3, 300)

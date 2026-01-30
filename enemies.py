@@ -19,6 +19,20 @@ def make_explosion(x, y, texture, count=80):
     )
 
 
+def make_big_explosion(x, y, texture, count=80):
+    return arcade.particles.Emitter(
+        center_xy=(x, y),
+        emit_controller=arcade.particles.EmitBurst(count),
+        particle_factory=lambda e: arcade.particles.FadeParticle(
+            filename_or_texture=texture,
+            change_xy=arcade.math.rand_in_circle((0.0, 0.0), 10.0),
+            lifetime=random.uniform(0.5, 2),
+            start_alpha=255, end_alpha=0,
+            scale=random.uniform(0.35, 0.6)
+        ),
+    )
+
+
 class BasicEnemy(arcade.Sprite):
     def __init__(self, texture, scale, center_x, center_y, damage, reload, health, speed, active, player, color, level):
         super().__init__(texture, scale, center_x, center_y)
@@ -56,13 +70,14 @@ class BasicEnemy(arcade.Sprite):
         return 0, 0
 
     def hurt(self, damage):
-        self.health -= damage
+        if self.active:
+            self.health -= damage
 
-        if self.health <= 0:
-            self.kill()
-            self.player.emitters.append(make_explosion(self.center_x, self.center_y, arcade.make_circle_texture(10, self.color), 20))
-        else:
-            self.player.emitters.append(make_explosion(self.center_x, self.center_y, arcade.make_circle_texture(8, self.color), 5))
+            if self.health <= 0:
+                self.kill()
+                self.player.emitters.append(make_explosion(self.center_x, self.center_y, arcade.make_circle_texture(10, self.color), 20))
+            else:
+                self.player.emitters.append(make_explosion(self.center_x, self.center_y, arcade.make_circle_texture(8, self.color), 5))
 
     def attack(self):
         if self.time_left <= 0:
@@ -77,17 +92,17 @@ class BasicEnemy(arcade.Sprite):
 
 class Enemy(BasicEnemy):
     def __init__(self, x, y, active, player, color, level):
-        super().__init__('assets/images/enemies/enemy.png', 1, x, y, 3, 1, 8, 3000, active, player, color, level)
+        super().__init__('assets/images/enemies/enemy.png', 1, x, y, 3, 1, 8, 4000, active, player, color, level)
 
 
 class FastEnemy(BasicEnemy):
     def __init__(self, x, y, active, player, color, level):
-        super().__init__('assets/images/enemies/fast_enemy.png', 1, x, y, 2, 0.8, 5, 5000, active, player, color, level)
+        super().__init__('assets/images/enemies/fast_enemy.png', 1, x, y, 2, 0.8, 5, 6000, active, player, color, level)
 
 
 class SlowEnemy(BasicEnemy):
     def __init__(self, x, y, active, player, color, level):
-        super().__init__('assets/images/enemies/slow_enemy.png', 1.2, x, y, 6, 1.2, 15, 1750, active, player, color, level)
+        super().__init__('assets/images/enemies/slow_enemy.png', 1.2, x, y, 6, 1.2, 15, 2000, active, player, color, level)
 
 
 class BasicShootingEnemy(BasicEnemy):
@@ -224,7 +239,7 @@ class BasicDashingEnemy(BasicEnemy):
 
 class DashingEnemy(BasicDashingEnemy):
     def __init__(self, x, y, active, player, color, level):
-        super().__init__('assets/images/enemies/dashing_enemy.png', 1, x, y, 3, 1, 7, 0.5, 6500, 1, active, player, color, level)
+        super().__init__('assets/images/enemies/dashing_enemy.png', 1, x, y, 3, 1, 7, 0.5, 8000, 1, active, player, color, level)
 
 
 class ShotgunEnemy(BasicShootingEnemy):
@@ -352,7 +367,7 @@ class SwordEnemy(BasicSwordEnemy):
 
 class SummonerBoss(BasicEnemy):
     def __init__(self, x, y, active, player, color, level, x1, y1, x2, y2):
-        super().__init__('assets/images/enemies/first_boss.png', 2, x, y, 10, 2, 200, 1500, active, player, color, level)
+        super().__init__('assets/images/enemies/first_boss.png', 2, x, y, 10, 2, 200, 2500, active, player, color, level)
         self.reload_bullet = 1
         self.reload_bullet_now = self.reload_bullet
 
@@ -426,6 +441,16 @@ class SummonerBoss(BasicEnemy):
     def kill(self):
         super().kill()
         self.bullets_list.clear()
+
+    def hurt(self, damage):
+        if self.active:
+            self.health -= damage
+
+            if self.health <= 0:
+                self.kill()
+                self.player.emitters.append(make_big_explosion(self.center_x, self.center_y, arcade.make_circle_texture(35, self.color), 40))
+            else:
+                self.player.emitters.append(make_explosion(self.center_x, self.center_y, arcade.make_circle_texture(8, self.color), 5))
 
 
 NORMAL_ENEMIES = [Enemy, FastEnemy, SlowEnemy, ShootingEnemy, DashingEnemy]
