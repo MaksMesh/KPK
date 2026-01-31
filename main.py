@@ -2,6 +2,7 @@ import os
 
 import arcade
 from pyglet.graphics import Batch
+from pyglet.image import load as load_image
 
 import armor
 import enemies
@@ -140,6 +141,7 @@ class StartScreen(arcade.View):
 class StartLocation(arcade.View):
     def __init__(self):
         super().__init__()
+        self.batch = Batch()
         
     def setup(self):
         self.tilemap = arcade.load_tilemap('assets/tilesets/start_tilemap.tmx', 0.75)
@@ -158,6 +160,9 @@ class StartLocation(arcade.View):
         self.player_list = arcade.SpriteList()
         self.player = arcade.Sprite('assets/images/player/players/default-player.png', 0.5, 875, 650)
         self.player_list.append(self.player)
+
+        self.text = arcade.Text('Нажмите Q, чтобы взаимодействовать.', self.player.center_x, self.player.center_y + 70, font_size=18, anchor_x='center',
+                                anchor_y='center', batch=self.batch)
 
         self.physics_engine = arcade.PhysicsEngineSimple(self.player, self.collision_tiles)
 
@@ -185,6 +190,7 @@ class StartLocation(arcade.View):
         self.base_tiles.draw()
         self.start_tiles.draw()
         self.upgrade_tiles.draw()
+        self.batch.draw()
         self.player_list.draw()
 
         self.manager.draw()
@@ -262,9 +268,9 @@ class StartLocation(arcade.View):
             modifiers[key] = value
 
         color = arcade.color.BLACK.from_iterable((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
-        mapp = random.choice(["map1.tmx", "map2.tmx", "map3.tmx"])
+        mapp = random.choice(["map1.tmx", "map2.tmx"])
 
-        game = Game(mapp, 0, upgrade_shards, modifiers, [(weapons.OldPistol, 1)], (None, 1), 20, 1, color)
+        game = Game(mapp, 0, upgrade_shards, modifiers, [(weapons.OldPistol, 5)], (None, 1), 20, 1, color)
         self.window.show_view(game)
 
 
@@ -584,6 +590,7 @@ class Game(arcade.View):
         self.emitters = []
 
         self.batch = Batch()
+        self.hint_batch = Batch()
 
         self.physics_engine = arcade.PymunkPhysicsEngine(damping=0)
 
@@ -602,9 +609,9 @@ class Game(arcade.View):
         self.color = color
         self.level = level
 
-        self.isLevelComp = False
-        self.level_completion_timer = 0
-        self.level_completion_triggered = False
+        # self.isLevelComp = False
+        # self.level_completion_timer = 0
+        # self.level_completion_triggered = False
 
         self.world_camera = arcade.Camera2D()
         self.gui_camera = arcade.Camera2D()
@@ -638,14 +645,14 @@ class Game(arcade.View):
                                                   anchor_y='center', batch=self.batch)
 
 
-        if not self.enemy_list.sprite_list and not self.level_completion_triggered:
-            self.level_completion_triggered = True
-            self.level_completion_timer = 10.0
+        # if not self.enemy_list.sprite_list and not self.level_completion_triggered:
+        #     self.level_completion_triggered = True
+        #     self.level_completion_timer = 10.0
 
-        if self.level_completion_timer > 0:
-            self.level_completion_timer -= delta_time
-            if self.level_completion_timer <= 0:
-                self.toggle_level_completion()
+        # if self.level_completion_timer > 0:
+        #     self.level_completion_timer -= delta_time
+        #     if self.level_completion_timer <= 0:
+        #         self.toggle_level_completion()
 
     def check_join_triggers(self):
         for i in arcade.check_for_collision_with_list(self.player, self.join_triggers):
@@ -664,6 +671,7 @@ class Game(arcade.View):
         self.world_camera.use()
         self.phone_list.draw()
         self.walls_list.draw()
+        self.hint_batch.draw()
 
         for e in self.emitters:
             e.draw()
@@ -749,6 +757,9 @@ class Game(arcade.View):
             elif symbol == arcade.key.ESCAPE:
                 self.keys = set()
                 self.window.show_view(PauseView(self, self.player.money, self.player.upgrade_crystals))
+            elif symbol == arcade.key.Y:
+                if not self.enemy_list.sprite_list:
+                    self.toggle_level_completion()
         elif not self.game_over:
             if symbol == arcade.key.ENTER:
                 if type(self.chosen_item) is items.WeaponItem:
@@ -959,6 +970,12 @@ class Game(arcade.View):
         self.music = arcade.load_sound(f'assets/music/music{random.randint(1, 3)}.mp3')
         self.music_player = self.music.play(1, loop=True)
 
+        if self.level == 1:
+            self.hint_text1 = arcade.Text('Y чтобы покинуть планету, когда все враги мертвы.', self.player.center_x, self.player.center_y + 80, font_size=18,
+                                         anchor_x='center', anchor_y='center', batch=self.hint_batch)
+            self.hint_text2 = arcade.Text('Остальное управление в ESC.', self.player.center_x, self.player.center_y + 50, font_size=18,
+                                         anchor_x='center', anchor_y='center', batch=self.hint_batch)
+
     def get_player_weapons(self):
         fin = []
         for i in self.player.inventory:
@@ -1041,6 +1058,7 @@ class PauseView(arcade.View):
 
 def main():
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    window.set_icon(load_image('assets/images/enemies/basic_enemy.png'))
     view = StartScreen()
     window.show_view(view)
     arcade.run()

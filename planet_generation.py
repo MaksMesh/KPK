@@ -162,10 +162,13 @@ class LevelTransitionView(arcade.View):
         self.upgrade_crystals = game_instance.player.upgrade_crystals
         self.level = level
 
+        if self.level == 1:
+            self.generate_random_graph()
+
         try:
             self.level_graph.load_from_file('assets/levels/level_graph.json')
         except:
-            self.level_graph.create_default_graph()
+            self.generate_random_graph()
             self.level_graph.save_to_file('assets/levels/level_graph.json')
 
         if completed_node_id is not None:
