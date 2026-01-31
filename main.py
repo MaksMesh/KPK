@@ -121,7 +121,7 @@ class StartScreen(arcade.View):
         self.box_layout.add(self.start_button)
 
         self.exit_button = UITextureButton(texture=self.button_texture, texture_hovered=self.button_texture_hovered, text='Выход')
-        self.exit_button.on_click = lambda x: exit()
+        self.exit_button.on_click = lambda x: arcade.exit()
         self.box_layout.add(self.exit_button)
 
     def on_draw(self):
@@ -1053,7 +1053,7 @@ class PauseView(arcade.View):
     def exit_game(self, *args):
         attrs = get_attrs()
         write_to_file([self.game.player.upgrade_crystals] + attrs)
-        exit()
+        arcade.exit()
 
 
 def main():
