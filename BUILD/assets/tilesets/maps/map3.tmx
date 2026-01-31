@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="46" height="90" tilewidth="64" tileheight="64" infinite="0" nextlayerid="8" nextobjectid="36">
+ <tileset firstgid="1" source="../room_tileset.tsx"/>
+ <layer id="1" name="floor" width="46" height="90">
+  <data encoding="base64" compression="zlib">
+   eJzt1SEOw0AQBEHn/58OP2QQtT1RtbS80M51/Uefm/e2uNu427jbuNtW3WcrzjPuNu62FffqH+Ru427jbuNuW3WfrTjPuNu427jbVtyru8Pdxt3G3cbdtuo+W3Gecbdxt3G3cbetuFd3nruNu427jfvZVpxn3G3cbdxt3L/v7ka+bT+527jbuNu427jbuNu421bdi30BvpAC2Q==
+  </data>
+ </layer>
+ <layer id="2" name="walls" width="46" height="90">
+  <data encoding="base64" compression="zlib">
+   eJzt1kEKgDAMBdHi/Q/tUggiLTajH2bAXSFvY9Mxro7F7y+tWHS/TzebbjbdbLrZnnb5n/d8rbpT0s2W4k79L5PvwY6z3elm082mm003W+qer6W8q2q62XSzpbhT78HkvdNxtjvdbLrZdLPpZkvd87WUd1VNN5tuNt1sKe7UvZO85zvOdqebTTebbrZkd+K+rKW8T2q62XSz6d7f3b08e39/eZ/vmqebnaebnaebnaebnaebnaebnaebnad7ft6uj+wEp7sCLQ==
+  </data>
+ </layer>
+ <layer id="3" name="chests" width="46" height="90" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztzjENAAAIA7A9+LeMjCXQKmgCAAAAAAAAAAAAAAAAAMAX0w4AcMYCYFQABg==
+  </data>
+ </layer>
+ <layer id="4" name="normal_enemy_texture" width="46" height="90" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztzjENAAAIA7Al+PeMgt1wtAqaAAAAAAAAAAAAAAAAQDfXAQAAAF5aa0AABA==
+  </data>
+ </layer>
+ <layer id="5" name="player" width="46" height="90" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztzjENAAAIA7Al+PeMiQWeVkET6JjvAAAAAAAAAAAAAAAAAAAAAGcW+9wABA==
+  </data>
+ </layer>
+ <objectgroup id="6" name="enemies">
+  <object id="5" gid="3" x="345.818" y="1238.42" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="7" gid="3" x="542.788" y="1435.39" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="8" gid="3" x="342.788" y="1644.48" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="9" gid="3" x="768" y="1664" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="10" gid="3" x="764" y="1241.45" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="11" gid="4" x="448" y="2688" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="12" gid="4" x="640" y="2688" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="13" gid="4" x="640" y="2496" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="14" gid="4" x="448" y="2496" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="16" gid="3" x="320" y="3648" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="17" gid="3" x="320" y="4032" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="18" gid="3" x="576" y="3840" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="19" gid="4" x="768" y="4032" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="20" gid="4" x="768" y="3648" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="22" gid="3" x="256" y="4864" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="23" gid="3" x="256" y="4992" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="24" gid="3" x="256" y="5120" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="25" gid="3" x="256" y="5248" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="26" gid="3" x="256" y="5376" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="27" gid="3" x="832" y="4864" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="28" gid="3" x="832" y="4992" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="29" gid="3" x="832" y="5120" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="30" gid="3" x="832" y="5248" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="31" gid="3" x="832" y="5376" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="7" name="join_triggers">
+  <object id="32" x="460" y="1021" width="226" height="66">
+   <properties>
+    <property name="room" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="33" x="495" y="2172" width="165" height="65">
+   <properties>
+    <property name="room" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="34" x="496" y="3452" width="167" height="66">
+   <properties>
+    <property name="room" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="35" x="485" y="4602" width="187" height="67">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="33" height="61" tilewidth="64" tileheight="64" infinite="0" nextlayerid="9" nextobjectid="43">
+ <tileset firstgid="1" source="../room_tileset.tsx"/>
+ <layer id="1" name="floor" width="33" height="61">
+  <data encoding="base64" compression="zlib">
+   eJzt1LsNwCAMQEHYf+kUGQAi44DMPYmOzxVAazXqk4NhbIjuwXCnITqqGLLWVzGM9v0yl2G/YeXanYas/+JGQ/Q+MjAw1DVk9OdZDAwnGk54mwwMDAwMDJIk6e0B7doCiQ==
+  </data>
+ </layer>
+ <objectgroup id="3" name="enemies" visible="0">
+  <object id="5" gid="3" x="128" y="385.333" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="6" gid="3" x="122.667" y="640" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="7" gid="3" x="569.333" y="382.667" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="8" gid="4" x="580" y="673.333" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="9" gid="3" x="1144" y="184" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="10" gid="3" x="1146" y="434" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="11" gid="3" x="1622" y="168" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="12" gid="3" x="1626" y="432" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="13" gid="3" x="1388" y="308" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="14" gid="3" x="1616" y="700" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="15" gid="4" x="1180" y="1660" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="16" gid="4" x="1878" y="1660" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="17" gid="3" x="1420" y="1472" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="18" gid="3" x="1704" y="1480" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="19" gid="4" x="1208" y="2300" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="20" gid="4" x="1706" y="2304" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="21" gid="4" x="1902" y="2310" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="22" gid="4" x="1902" y="2488" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer id="4" name="chests" width="33" height="61" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztzjEJAAAMA7A+8295MgolUZAEAAAAAAD2XTsAAEx6SWgABg==
+  </data>
+ </layer>
+ <layer id="5" name="walls" width="33" height="61">
+  <data encoding="base64" compression="zlib">
+   eJzt1ksKgDAMRdHS/S/auUjzxxjvg05EwjGp1bVi2cZVEUvdzoZoL7MMkRoY3jNE3rcMQzRTDB1m0WVPPl2T+iP1rOq8vxsq6k40aOYozdNaR7s/tM/tPWO6GbQ9rDZY7seAAcO/DJp1qpX5vciK58zHMMPQYU9m/8NgwIABAwYMlQbvIoQQQr6UC9M9AfE=
+  </data>
+ </layer>
+ <layer id="6" name="player" width="33" height="61" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztzjENAAAMA6Ae8695Kpo+oIAEAACg59YBAAAAACh6a3QABQ==
+  </data>
+ </layer>
+ <layer id="7" name="normal_enemy_texture" width="33" height="61" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztzgEJAAAIA7CD/Tsb44hbgiUAAAAA8Nu0AwAAwFkLRGQABA==
+  </data>
+ </layer>
+ <objectgroup id="8" name="join_triggers" class="join_triggers">
+  <object id="39" x="310" y="1025" width="152" height="66">
+   <properties>
+    <property name="room" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="40" x="1025" y="503" width="54" height="151">
+   <properties>
+    <property name="room" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="41" x="1444" y="1025" width="184" height="62">
+   <properties>
+    <property name="room" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="42" x="1450" y="2115" width="170" height="59">
+   <properties>
+    <property name="room" type="int" value="4"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>
