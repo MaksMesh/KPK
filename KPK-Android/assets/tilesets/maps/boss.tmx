@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="38" height="67" tilewidth="64" tileheight="64" infinite="0" nextlayerid="10" nextobjectid="4">
+ <tileset firstgid="1" source="../room_tileset.tsx"/>
+ <layer id="1" name="floor" width="38" height="67">
+  <data encoding="base64" compression="zlib">
+   eJzt1zEKgEAQBMHz/582NbwWxRWqYfKKFnatf3VsjIuLi4vrXpMs17haXK2vXDs3oYyLi4uLi4uLi4vrSVe1T4qrxdXianG1uFpcLa4WV4urxbXvmPr/cHFxcXHprU5xhgJ5
+  </data>
+ </layer>
+ <layer id="2" name="walls" width="38" height="67">
+  <data encoding="base64" compression="zlib">
+   eJztmMEKgCAUBKX//+juRdEIuwrNgIdAdseLPBvjzgFWk699erE+vVifXqxPL9a3wuvpTl9531893r5XoRdjlRedZVrzT+L8evUz9epnJDL16mckMvXqZyQy9epnJDL16mckMmfm4l3+I/omYujF0IuhF0Mvhl4MvRh6MfRi7OI1M9+3vJL7Z9Er26NXdv8semV79OLrL5yzGAGR
+  </data>
+ </layer>
+ <layer id="3" name="chests" width="38" height="67" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztxaENAAAIA7AZ/n8Zv2BxrWkCXKYGAAAAAAAAAAD4sJZnAAs=
+  </data>
+ </layer>
+ <layer id="4" name="normal_enemy_texture" width="38" height="67" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztzjENAAAIA7Al+PfMXHDQKmgCAPDTXAcAAAAAAAAAoBaECAAE
+  </data>
+ </layer>
+ <layer id="5" name="player" width="38" height="67" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztzjENAAAMA6Am8+95MtoDFJAAAAAAAAAAAAALrh0AKh4zvAAE
+  </data>
+ </layer>
+ <objectgroup id="6" name="join_triggers" visible="0">
+  <object id="1" x="614" y="2178" width="282" height="62">
+   <properties>
+    <property name="room" type="int" value="1"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer id="8" name="boss_angles" width="38" height="67" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJzt1rEJAAAIBLEH999ZXMFGhGSCKy8BAOCzug4AAGDNywEAAAAAowG+NAAH
+  </data>
+ </layer>
+ <objectgroup id="9" name="boss" visible="0">
+  <object id="3" gid="4" x="659" y="1589" width="64" height="64">
+   <properties>
+    <property name="room" type="int" value="1"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>
